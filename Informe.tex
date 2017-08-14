@@ -1,0 +1,1936 @@
+\documentclass{report}
+
+\begin{titlepage}
+\title{\Huge{\textbf{Informe}}}
+\author{\Large{Ana Medina García}}
+\date{\today}
+\end{titlepage}
+
+\usepackage[margin=0.8in]{geometry}
+\usepackage[spanish]{babel}
+\usepackage{indentfirst}
+
+\usepackage{Sweave}
+\begin{document}
+\input{Informe-concordance}
+\parskip=4mm
+
+\maketitle
+\chapter{Introducción}
+\setlength{\parindent}{8pt}
+
+\section{Estudio de la recidiva en pacientes con cáncer de mama}
+
+El cáncer de mama incluye un grupo de enfermedades heterogéneas que pueden ser clasificadas en base tanto a características moleculares como clínico-patológicas. La mejora en la detección temprana de tumores primarios y el desarrollo de terapias dirigidas (medicaicón que bloquea el crecimiento y diseminación del cáncer interfiriendo con determinadas moléculas responsables del crecimiento del tumor y la progresión de la enfermedad), junto con el uso sistemático de quimioterapia adyuvante (quimioterapia que se aplica después de un tratamiento principal, como la intervención quirúrjica), ha reducido drásticamente los índices de mortalidad e incrementado la supervivencia libre de enfermedad en cáncer de mama. No obstante, los datos reflejan que un tercio de las pacientes operadas de un tumor mamario aún terminan desarrollanfo metástasis, lo que seriamente merma las espectativas sobre un desenlace positivo de la enfermedad.
+
+Por otro lado, el riesgo de recidiva tras la resección de un tumor no es constante a lo largo del tiempo. Un análisis el patron de recidiva, en datos con seguimiento de paciente durante un período largo de tiempo, revela una función bimodal con dos picos claramente diferenciados a los 1.5 años (recidiva temprana) y a los 5 años (recidiva tardía) seguido por períodos de tiempo en los cuales el riesgo de recidiva tiende a cero. Algunos investigadores han establecido una relación causal entre el acto quirúrgico y el patron de recidiva bimodal, de tal forma que la resección del tumor primario podría acelerar el crecimiento del foco metastásico latente mediante la alteración del balance entre factores pro- y anti-angionénicos (sustancias que potencian o inhiben el crecimiento de vases sanguíneos - angiogénesis). Esta hipótesis está avalada por el hecho de que los dos picos de recidiva aparecen con independencia de otros factores distintos a la cirugía, como la presencia de ganglios axilares afectados, el tipo de cirugía o la administración de quimioterapia adyuvante (es decir, analizando las funciones de riesgo en base a estas variables, igualmente aparecen los picos en la función de riesgo). Otros estudios también demuestran que la distribución bimodal aparece encluso independientemente del estado de los receptores hormonales, cuando la evidencia demuestra que los tumores ER-negativos están comúnmente asociados con un alto riesgo de recidiva. Otros estudios sugieren que la dinámica de la recidiva del tumor puede ser una consecuencia del procedimiento quirúrgico para eliminr el tumos primario, debido a la alteración de los niveles circulantes en salngre de VEGF, TNFa y otras citoquinas inflamatorias. No obstane, todavía es necesario mayor evidencia empírica que demuestre una relación a nivel molecular entre la cirugía de un tumo primario de mama y el patrón de recurrencia bimodal.
+
+
+\chapter{Análisis y limpieza de datos}
+\setlength{\parindent}{8pt}
+
+\section{Análisis de datos}
+
+\subsection{Datos de pacientes}
+
+Vamos a realizar un estudio de la recidiva en un grupo de pacientes de cáncer de mama. Los 75 pacientes incluídos en el estudio fueron operados de un tumor primario de mama en el Hospital Universitario Virgen de la Victoria (HUVV, Málaga, España) entre los años 1998 y 2005. Todos los pacientes proporcionaron el consentimiento informado para su participación en el estudio. Los pacientes fueron tratados y su evolución controlada de acuerdo a los protocolos establecidos en el Servicio de Oncología Clínica, en base a la evidencia científica y a las recomendaciones internacionales.
+Toda la investigación clínica se desarrolló de acuerdo a los principios epresados en la declaración de Helsinki. Ninguno de los pacientes recibió terapia neo-adyuvante, y los datos clínico-patológicos fueron obtenidos por revisión de historias clínicas.
+
+\subsection{Datos inmunohistoquímicos}
+
+Las muestras de tumor se clasificaron de acuerdo al subtipo intrínseco determinado por coloración inmunohistoquímica de la preparación de tejido, en base a la expresión de anticuerpos específicos contra los receptores de estrógeno (ER), receptores de progesterona (PR), la proteína Ki67, asociada con la proliferación celular, el receptor 1 de factor de crecimiento epidermal (EGFR1), el factor de crecimiento endotelial vascular (VEGF) y la citoqueratina CK5/6. El nivel de expresión del proto-oncogen HER2 se determinó mediante la prueba del HercepTest. La interpretación de los datos inmunohistoquímicos se realizó por dos patólogs en un estudio ciego a las caractrísticas clínico-patológicas y de evolución de los pacientes.
+
+\subsection{Análisis}
+
+En primer lugar, cargamos los datos del estudio uniendo los datos clínicos con los datos de marcadores.
+Utilizando la función 'summary()' podemos obtener un resumen de los campos y sus valores en el conjunto de datos.
+
+\begin{Schunk}
+\begin{Sinput}
+> workingDir <- "C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining"
+> dataDir <- file.path(workingDir, "Datos")
+> resultsDir <- file.path(workingDir, "Resultados")
+> setwd(workingDir)
+> misDatos <- read.csv("DatosClinicos.csv")
+> markers <- read.csv2(file=paste("Markers.csv"))
+> misDatos <- cbind(misDatos, markers[,2:5])
+> summary(misDatos)
+\end{Sinput}
+\begin{Soutput}
+     IdPac             fenotipo      grupo       estadog            sgd        
+ M01    : 1                : 2   Grupo A:36   Min.   :0.0000   Min.   : 118.0  
+ M02    : 1   Basal like   :19   Grupo B:27   1st Qu.:0.0000   1st Qu.: 952.5  
+ M03    : 1   HER2 enriched:16   Grupo C:12   Median :0.0000   Median :1927.0  
+ M04    : 1   Luminal-HER2 : 1                Mean   :0.2267   Mean   :2060.4  
+ M05    : 1   Luminal A    :19                3rd Qu.:0.0000   3rd Qu.:2759.0  
+ M06    : 1   Luminal B    :18                Max.   :2.0000   Max.   :5360.0  
+ (Other):69                                                                    
+      sgm              sga              iled           ilem       
+ Min.   :  3.90   Min.   : 0.300   Min.   : 118   Min.   :  3.90  
+ 1st Qu.: 31.75   1st Qu.: 2.600   1st Qu.: 631   1st Qu.: 21.00  
+ Median : 64.20   Median : 5.300   Median :1658   Median : 55.30  
+ Mean   : 68.68   Mean   : 5.644   Mean   :1684   Mean   : 56.14  
+ 3rd Qu.: 91.95   3rd Qu.: 7.550   3rd Qu.:2280   3rd Qu.: 76.00  
+ Max.   :178.70   Max.   :14.700   Max.   :5043   Max.   :168.10  
+                                                                  
+      ilea            recid               tam         ngang      
+ Min.   : 0.300   Min.   :0.00   2.5        : 8   Min.   : 0.00  
+ 1st Qu.: 1.750   1st Qu.:0.00   3.5        : 7   1st Qu.: 0.00  
+ Median : 4.500   Median :1.00   2          : 5   Median : 1.00  
+ Mean   : 4.613   Mean   :0.52   3          : 5   Mean   : 3.16  
+ 3rd Qu.: 6.250   3rd Qu.:1.00   DESCONOCIDO: 5   3rd Qu.: 4.00  
+ Max.   :13.800   Max.   :1.00   1          : 4   Max.   :34.00  
+                                 (Other)    :41                  
+      edad       VEGF          RE              Ki67           iL.8      
+ Min.   :30.00   1 :12   Min.   :0.0000   Min.   :1.00   Min.   :1.000  
+ 1st Qu.:42.00   2 :28   1st Qu.:0.0000   1st Qu.:1.00   1st Qu.:2.000  
+ Median :53.00   3 :29   Median :0.0000   Median :2.00   Median :3.000  
+ Mean   :53.73   NO: 6   Mean   :0.4667   Mean   :1.64   Mean   :2.507  
+ 3rd Qu.:64.50           3rd Qu.:1.0000   3rd Qu.:2.00   3rd Qu.:3.000  
+ Max.   :87.00           Max.   :1.0000   Max.   :2.00   Max.   :3.000  
+\end{Soutput}
+\end{Schunk}
+
+Es muy importante conocer el significado de los datos que se van a analizar.
+Resumimos a continuación la información más relevante de los campos y sus posibles valores:
+
+\begin{itemize}
+\item Fenotipo (fenotipo)
+  \begin{itemize}
+  \item Basal like:
+  \item Luminal A:
+  \item Luminal B:
+  \item HER2 enriched
+  \item Luminal-HER2
+  \end{itemize}
+\item Grupo (grupo):
+  \begin{itemize}
+  \item grupo A: no recidiva
+  \item grupo B: recidva temprana
+  \item grupo C: recidiva tardia
+  \end{itemize}
+\item Estado glogal (estadog): supervivencia global (SG)
+  \begin{itemize}
+  \item 0: vivo
+  \item 1: muerto
+  \item 2: muerto por causas agenas al cáncer
+  \end{itemize}
+\item Tiempo de seguimiento: (o de último control - en caso de muerte)
+  \begin{itemize}
+  \item sgd: en días
+  \item sgm: en meses
+  \item sga: en años
+  \end{itemize}
+\item Recidiva (recid):
+  \begin{itemize}
+  \item 1: sí
+  \item 2: no
+  \end{itemize}
+\item Tiempo de recidiva: supervivencia libre de enfermedad (SLE)
+  \begin{itemize}
+  \item iled: en días
+  \item ilem: en meses
+  \item ilea: en años
+  \end{itemize}
+\item Tamaño del tumor (tam)
+\item Número de ganglios afectados (ngang)
+\item Edad (edad)
+\end{itemize}
+
+
+
+\section{Limpieza de datos}
+
+Para realizar la limpieza de datos debemos, en primer lugar, estudiar cómo se han guardado los datos. Para ello, utilizamos las funciones 'class()'y 'str()' que nos indican, respectivamente, el tipo o clase del conjunto de datos y los tipos de datos de cada campo.
+
+\begin{Schunk}
+\begin{Sinput}
+> class(misDatos)
+\end{Sinput}
+\begin{Soutput}
+[1] "data.frame"
+\end{Soutput}
+\begin{Sinput}
+> str(misDatos)
+\end{Sinput}
+\begin{Soutput}
+'data.frame':	75 obs. of  18 variables:
+ $ IdPac   : Factor w/ 75 levels "M01","M02","M03",..: 1 2 3 4 5 6 7 8 9 10 ...
+ $ fenotipo: Factor w/ 6 levels "","Basal like",..: 2 5 2 5 5 6 5 5 5 6 ...
+ $ grupo   : Factor w/ 3 levels "Grupo A","Grupo B",..: 2 1 2 1 3 2 1 3 2 1 ...
+ $ estadog : int  1 0 0 0 0 0 0 1 0 0 ...
+ $ sgd     : int  566 2122 1194 2883 2304 904 1888 3235 1364 1678 ...
+ $ sgm     : num  18.9 70.7 39.8 96.1 76.8 ...
+ $ sga     : num  1.6 5.8 3.3 7.9 6.3 2.5 5.2 8.9 3.7 4.6 ...
+ $ iled    : int  566 2122 554 2883 1886 342 1888 1601 602 1678 ...
+ $ ilem    : num  18.9 70.7 18.5 96.1 62.9 11.4 62.9 53.4 20.1 55.9 ...
+ $ ilea    : num  1.6 5.8 1.5 7.9 5.2 0.9 5.2 4.4 1.6 4.6 ...
+ $ recid   : num  1 0 1 0 1 1 0 1 1 0 ...
+ $ tam     : Factor w/ 32 levels "1","1.3","1.5",..: 24 20 22 14 26 19 1 12 15 15 ...
+ $ ngang   : int  7 0 7 0 3 4 1 0 0 0 ...
+ $ edad    : int  45 34 43 44 64 51 49 31 74 82 ...
+ $ VEGF    : Factor w/ 4 levels "1","2","3","NO": 3 1 1 3 3 3 1 3 3 3 ...
+ $ RE      : int  0 1 0 1 1 1 1 1 1 1 ...
+ $ Ki67    : int  2 1 2 1 1 2 1 1 1 2 ...
+ $ iL.8    : int  3 2 2 3 3 3 2 2 1 2 ...
+\end{Soutput}
+\end{Schunk}
+
+En este caso, observamos que nuestra tabla de datos se ha guardado como un objeto de tipo 'data.frame'. Además, podemos encontrar que algunos de los campos de la tabla se han guardado de forma que no nos interesa. Por ejemplo, la variable tamaño (tam) se ha guardado como Factor cuando debería ser numérico continuo. Para hayar la causa de esto, podemos utilizar la función 'levels()' sobre la variable 'tam' de forma que obtengamos todos los valores posibles que toma esta variable.
+\begin{Schunk}
+\begin{Sinput}
+> levels(misDatos$tam)
+\end{Sinput}
+\begin{Soutput}
+ [1] "1"           "1.3"         "1.5"         "1.7"         "1.8"        
+ [6] "1.9"         "10"          "2"           "2.2"         "2.3"        
+[11] "2.4"         "2.5"         "2.6"         "2.7"         "2.8"        
+[16] "2.9"         "3"           "3.4"         "3.5"         "3.6"        
+[21] "3.7"         "4"           "4.5"         "5"           "5.8"        
+[26] "5.9"         "6"           "6.5"         "6.8"         "7.8"        
+[31] "8"           "DESCONOCIDO"
+\end{Soutput}
+\end{Schunk}
+
+Podemos observar de esta forma que, probablemente, la presencia del valor 'DESCONOCIDO'  en el campo tam es el que provoca que se hayan guardado los datos como Factor. 
+Para evitar esto, los valores perdidos en R se etiquetan como 'NA', permitiendo así guardarlos como numéricos.
+Una de las opciones que se pueden llevar a cabo para resolver la ausencia de datos de tamaño, intentando no perder valor estadístico en los datos, es la imputación. En este caso hemos decidido utilizar la media para imputar los datos perdidos. Para ello buscamos los registros que contengan el valor 'DESCONOCIDO' en el campo tam y lo sustituimos por el valor 'NA', lo cual nos permite cambiar el tipo de la variable de Factor a Numérico y luego sustituir los valores NA por el tamaño medio de los datos.
+\begin{Schunk}
+\begin{Sinput}
+> tamAux<-misDatos$tam
+> tamAux<-as.numeric(as.character(tamAux))
+> meanTam<-summary(tamAux)[4]
+> misDatos$tam[misDatos$tam=="DESCONOCIDO"] <- NA 
+> misDatos$tam <- as.numeric(as.character(misDatos$tam))
+> misDatos$tam[is.na(misDatos$tam)] <- meanTam
+\end{Sinput}
+\end{Schunk}
+
+Del mismo modo, los posibles valores del campo fenotipo y el número de veces que aparecen deben modificarse para no perder valor estadístico en los datos.
+\begin{Schunk}
+\begin{Sinput}
+> summary(misDatos$fenotipo)
+\end{Sinput}
+\begin{Soutput}
+                 Basal like HER2 enriched  Luminal-HER2     Luminal A 
+            2            19            16             1            19 
+    Luminal B 
+           18 
+\end{Soutput}
+\end{Schunk}
+
+Ya que sólo tenemos un caso de fenotipo Luminal-HER2 y éste es un subtipo de Luminal B, lo sustituimos por el tipo Luminal B:
+\begin{Schunk}
+\begin{Sinput}
+> misDatos$fenotipo[misDatos$fenotipo=="Luminal-HER2"] <- "Luminal B"
+\end{Sinput}
+\end{Schunk}
+
+Para obtener resultados estadísticamente significativos necesitamos eliminar los casos en los que no hay fenotipo registrado. Como solución provisional a los casos sin fenotipo, los incluimos en el tipo Luminal B, ya que es el más común:
+\begin{Schunk}
+\begin{Sinput}
+> misDatos$fenotipo[misDatos$fenotipo==""] <- "Luminal B"
+> summary(misDatos$fenotipo)
+\end{Sinput}
+\begin{Soutput}
+                 Basal like HER2 enriched  Luminal-HER2     Luminal A 
+            0            19            16             0            19 
+    Luminal B 
+           21 
+\end{Soutput}
+\end{Schunk}
+
+
+\chapter{Modelos predictivos}
+\setlength{\parindent}{8pt}
+
+\section{Regresión logística}
+
+Utilizamos un modelo de regresión logística para estimar un modelo predictivo de recidiva de pacientes en base a diferentes factores pronóstico de la enfermedad: tamaño del tumor, número de ganglios afetados, edad del paciente y fenotipo.
+Establecemos un umbral de 0.5 para asignar los valores de la predicción.
+Finalmente, calculamos la matriz de confusión o tabla de contingencia del modelo y obtenemos valores de precisión del modelo como la "accuracy", la sensibilidad y la especificidad. Para esto utilizamos la librería 'caret'(Classifiaction and Regession Training), con la cual podemos obenter mediante un única función, cofusionMatrix(), la tabla de contingencia, la accuracy, la sensibilidad y otros valores de interés.
+
+\begin{Schunk}
+\begin{Sinput}
+> library(caret)
+> regLog <- glm(recid~tam+ngang+edad+fenotipo, data=misDatos, family=binomial)
+> summary(regLog)
+\end{Sinput}
+\begin{Soutput}
+Call:
+glm(formula = recid ~ tam + ngang + edad + fenotipo, family = binomial, 
+    data = misDatos)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.8720  -1.1265   0.4501   1.1998   1.3643  
+
+Coefficients:
+                       Estimate Std. Error z value Pr(>|z|)  
+(Intercept)           -0.689700   1.124424  -0.613   0.5396  
+tam                    0.020485   0.140978   0.145   0.8845  
+ngang                  0.127949   0.069529   1.840   0.0657 .
+edad                   0.006447   0.017624   0.366   0.7145  
+fenotipoHER2 enriched -0.047921   0.734663  -0.065   0.9480  
+fenotipoLuminal A      0.027077   0.683631   0.040   0.9684  
+fenotipoLuminal B      0.025916   0.669134   0.039   0.9691  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 103.852  on 74  degrees of freedom
+Residual deviance:  98.559  on 68  degrees of freedom
+AIC: 112.56
+
+Number of Fisher Scoring iterations: 4
+\end{Soutput}
+\begin{Sinput}
+> pred <- predict(regLog, misDatos, type="response")
+> # utilizamos el umbral 0.5 para asignar los valores 0 o 1 a la predicción
+> pred.th <- pred
+> pred.th[pred.th<0.5]<-0
+> pred.th[pred.th>=0.5]<-1
+> #calculamos la matriz de confusión y obtenemos la accuracy, la sensibilidad y la especificidad
+> confMatrix <- confusionMatrix(pred.th,misDatos$recid)
+> confMatrix$table
+\end{Sinput}
+\begin{Soutput}
+          Reference
+Prediction  0  1
+         0 26 22
+         1 10 17
+\end{Soutput}
+\begin{Sinput}
+> confMatrix$overall[1]
+\end{Sinput}
+\begin{Soutput}
+ Accuracy 
+0.5733333 
+\end{Soutput}
+\begin{Sinput}
+> confMatrix$byClass[1]
+\end{Sinput}
+\begin{Soutput}
+Sensitivity 
+  0.7222222 
+\end{Soutput}
+\begin{Sinput}
+> confMatrix$byClass[2]
+\end{Sinput}
+\begin{Soutput}
+Specificity 
+  0.4358974 
+\end{Soutput}
+\end{Schunk}
+
+\subsection{Cálculo del área bajo la curva ROC:}
+El cálculo del área bajo la curva ROC, se basa en que no se aplica un umbral para la predicción, sino que se cogen todos los valores obtenidos al hacer la predcción, se ordenan, y se van utilizando como umbral cada uno de ellos. Para cada predicción con cada uno de estos valores de umbral se obtiene una sensibilidad y una especificidad y se construye una gráfica donde cada punto representa sensibilidad frente a (1-especificidad) en la predicción con un umbral concreto. Estos puntos se unen en una curva, dejando un área bajo la misma que indica la eficacia del modelo. El valor del área será de entre 0 y 1, siendo el modelo más eficaz cuanto más se acerque a 1 este valor.
+
+Para mostrarlo, calculamos el área bajo la curva ROC de la regresión logística anterior y generamos la gráfica de la curva:
+
+\begin{Schunk}
+\begin{Sinput}
+> library(pROC)
+> obj.roc <- roc(misDatos$recid, pred, smooth=FALSE, auc=TRUE)
+> auc(obj.roc)
+\end{Sinput}
+\begin{Soutput}
+Area under the curve: 0.594
+\end{Soutput}
+\begin{Sinput}
+> auc
+\end{Sinput}
+\begin{Soutput}
+function (...) 
+{
+    UseMethod("auc")
+}
+<environment: namespace:pROC>
+\end{Soutput}
+\begin{Sinput}
+> plot(obj.roc, main="Regresión logística - Curva ROC")
+\end{Sinput}
+\begin{Soutput}
+Call:
+roc.default(response = misDatos$recid, predictor = pred, smooth = FALSE,     auc = TRUE)
+
+Data: pred in 36 controls (misDatos$recid 0) < 39 cases (misDatos$recid 1).
+Area under the curve: 0.594
+\end{Soutput}
+\end{Schunk}
+\includegraphics{Informe-009}
+
+
+Implementamos ahora un esquema de validación hold-out (60\% training, 40\% test) para calcular el procentaje de clasificación correcta (ACC, accuracy) promedio en training y test (generalización). Estudiamos, además, cómo varía el ACC para test en función del número de repeticiones del hold-out:
+
+\begin{Schunk}
+\begin{Sinput}
+> library(caret)
+> holdOut <- function(prc.train, repNum) {
++   holdOut.acc<-NULL
++   for(i in 1:repNum) {
++     
++     indt <- sample(length(misDatos$recid), length(misDatos$recid)*prc.train/100)
++     dat.train <- misDatos[indt,] #conjunto de training
++     dat.test <- misDatos[-indt,] #conjunto de test
++     
++     rl.train <- glm(recid~tam+ngang+edad+fenotipo,data=dat.train,family=binomial)
++     rl.train$xlevels[["fenotipo"]] <- union(rl.train$xlevels[["fenotipo"]], levels(dat.test$fenotipo))
++     pred.test <- predict(rl.train, dat.test, type="response")
++     
++     # utilizamos el umbral 0.5 para asignar los valores 0 o 1 a la prediccion
++     pred.test[pred.test<0.5]<-0
++     pred.test[pred.test>=0.5]<-1
++     pred.test<-factor(pred.test, levels= c("0","1"))
++     
++     #calculamos la matriz de confusion y la accuracy
++     confusionMatrix <- confusionMatrix(pred.test, dat.test$recid)
++     accuracy <- confusionMatrix$overall[1]
++     holdOut.acc<-c(holdOut.acc,accuracy)
++   }
++   
++   #calculamos la accuracy promedio (generalización)
++   accG<-mean(holdOut.acc,na.rm=TRUE)
++   return (accG)
++ }
+\end{Sinput}
+\end{Schunk}
+
+Para estudiar la variación del ACC en función del número de repeticiones llamamos a la función holdOut en bucle (de 5 a 100 repetiones aumentando de 5 en 5):
+\begin{Schunk}
+\begin{Sinput}
+> var.accG<-NULL
+> for(i in seq(5,100,by=5)){
++ var.accG <- c(var.accG,holdOut(60,i))
++ }
+> var.accG
+\end{Sinput}
+\begin{Soutput}
+ [1] 0.4800000 0.4333333 0.4555556 0.4333333 0.4373333 0.4422222 0.4400000
+ [8] 0.4700000 0.4548148 0.4380000 0.4357576 0.4405556 0.4502564 0.4552381
+[15] 0.4586667 0.4437500 0.4513725 0.4581481 0.4663158 0.4426667
+\end{Soutput}
+\begin{Sinput}
+> hist(var.accG, main="Variación de accuracy")
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Informe-011}
+
+\section{Aprendizaje supervisado}
+
+\subsection {Redes neuronales: (MLP)}
+La función de cada neurona sería el sumatorio de los impulsos que le llegan a través de las dendritas multiplicada cada una por el grado de importancia de esa conexión. Las conexiones entre neuronas se refuerzan o se debilitan  dependiendo de la experiencia. Algunos datos a tener en cuenta:
+LTD: depresión sináptica.
+LTP: potenciación sináptica.
+La salida final sería un logaritmo (entre 0 y 1).
+Las funciones de las neuronas intermedias son tangentes hiperbólicas (entre -1 y 1).
+Algoritmo de retropropagación de errores: si la salida no es la deseada se vuelve hacia atrás modificando las conexiones para que la próxima vez, esa misma entrada genere una más parecida a la deseada.
+Es importante ajustar bien la constante de aprendizaje para que no oscile demasiado pero tampoco tarde demasiado en aprender.
+
+\begin{Schunk}
+\begin{Sinput}
+> library(nnet)
+> nn.fit<-nnet(recid~tam+ngang+edad+fenotipo,data=misDatos,size=5,entropy= TRUE,maxit=1000,decay=5e-4)
+> nn.pred <- predict(nn.fit, misDatos, type="raw")
+> nn.roc <- roc(misDatos$recid, nn.pred, smooth=FALSE, auc=TRUE)
+> plot(nn.roc, main="Redes Neuronales - Curva ROC")
+> auc(nn.roc)
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Informe-012}
+
+\subsection{Máquinas de soporte vectorial: (SVM)}
+Se trata de encontrar los vectores de soporte, es decir, los patrones de cada tipo más cercanos al plano de separación, y maximizar la distancia de éstos al plano. Cuando la separación no puede ser lineal se utiliza una función kernel no lineal.
+
+\begin{Schunk}
+\begin{Sinput}
+> library(e1071)
+> svm.fit <- svm(recid~tam+ngang+edad+fenotipo,data=misDatos,cost=1000,gamma=1,probability=TRUE)
+> svm.pred <- predict(svm.fit, misDatos, probability=TRUE)
+> svm.roc <- roc(misDatos$recid, svm.pred, smooth=FALSE, auc=TRUE)
+> plot(svm.roc, main="Máquinas de Soporte Vectorial - Curva ROC")
+\end{Sinput}
+\begin{Soutput}
+Call:
+roc.default(response = misDatos$recid, predictor = svm.pred,     smooth = FALSE, auc = TRUE)
+
+Data: svm.pred in 36 controls (misDatos$recid 0) < 39 cases (misDatos$recid 1).
+Area under the curve: 1
+\end{Soutput}
+\begin{Sinput}
+> auc(svm.roc)
+\end{Sinput}
+\begin{Soutput}
+Area under the curve: 1
+\end{Soutput}
+\end{Schunk}
+\includegraphics{Informe-013}
+
+\section{Evaluación de modelos}
+
+Vamos a analizar cómo influye la inclusión o no de variables en el modelo. Es decir, fijaremos un esquema de validación Hold-Out y probaremos a estimar modelos incluyendo diferentes combinaciones y número de variables. Para ello construimos una función 'holdOutG' generalizada, que implementa el método de validación conocido como Hold-Out y que toma como entrada los siguientes parámetros: la fórmula, los datos de ajuste del modelo y el número de simulaciones.
+De esta forma se puede utilizar esta función para aplicar la validación con cualquier modelo y conjunto de datos. Al tener la fórmula (y~) como parámetro, también se pueden elegir las variables que se utilizan. 
+Además, podremos estudiar la variación en la varianza del AUC promedio dependiendo del número de repeticiones de la simulación, ya que la función devolverá como resultado una lista que contendrá:
+\begin{itemize}
+\item Vector de AUC generalizadas (AUCg)
+\item Promedio de AUC generalizadas (AUCg.mean)
+\item Vector de AUC de tranning (AUCt)
+\item Promedio de AUC de trainning (AUCt.mean)
+\item Vector de ACC generalizadas (ACCg)
+\item Promedio de ACC generalizadas (ACCg.mean)
+\item Vector de ACC de tranning (ACCt)
+\item Promedio de ACC de tranning (ACCt.mean)
+\end{itemize}
+
+\begin{Schunk}
+\begin{Sinput}
+> holdOutG <- function(formula, datos, nSim, prc.train) {
++   AUCg <- NULL
++   #AUCt <- NULL
++   ACCg <- NULL
++   #ACCt <- NULL
++   for(i in 1:nSim) {
++     
++     indt <- sample(length(misDatos$recid), length(misDatos$recid)*prc.train/100)
++     dat.train <- datos[indt,] #conjunto de training
++     dat.test <- datos[-indt,] #conjunto de test
++     
++     rl.train <- glm(formula, data=dat.train, family=binomial)
++     pred.test <- predict(rl.train, dat.test, type="response")
++     
++     #calculamos la AUC (area bajo la curva ROC)
++     obj.auc <- auc(dat.test$recid, pred.test)
++     AUCg <- c(AUCg,obj.auc)
++     
++     # utilizamos el umbral 0.5 para asignar los valores 0 o 1 a la prediccion
++     pred.test[pred.test<0.5]<-0
++     pred.test[pred.test>=0.5]<-1 
++     
++     pred.test<-factor(pred.test, levels=c("0","1"))
++     
++     #calculamos la matriz de confusion y la accuracy
++     confMatrix<-confusionMatrix(pred.test, dat.test$recid)
++     accuracy <- confMatrix$overall[1]
++     ACCg <- c(ACCg,accuracy)
++    
++   }
++   #calculamos la auc promedio (generalización)
++   aucG <- mean(AUCg)
++   #calculamos la accuracy promedio (generalización)
++   accG<-mean(ACCg,na.rm=TRUE)
++   
++   obj.list <- list(AUCg=AUCg, AUCg.mean=aucG, ACCg=ACCg, ACCg.mean=accG)
++   return (obj.list)
++ }
+\end{Sinput}
+\end{Schunk}
+
+Utilizaremos esta función Hold-Out generalizada para ajustar modelos de regresión logística probando con diferentes combinaciones posibles de variables del conjunto de datos.
+Observando las gráficas obtenidas tras variar el número de repeticiones de la función, podemos ver que cuánto mayor es el número de repeticiones del holdOut, menor es la varianza o desviación estándar de la AUC promedio. Es decir, más se ajusta la  distribución de AUC a una NORMAL.
+La desviación estándar de la media muestral es el error estándar de la media:
+sd(AUCg-promedio) = var(AUCg)/sqrt(n)
+donde n es el tamaño de la muestra, en este caso el número de repts del holdOut.
+
+\subsection{Estimación de modelos de una sola variable}
+
+Como ejemplo y a modo de control, realizamos un ajuste del modelo para la variable 'grupo', del que, obviamente, esperamos obtener que esta variable es totalmente discriminativa, ya que representa los tres grupos correspondientes a la aparición o ausencia de recidiva:
+\begin{Schunk}
+\begin{Sinput}
+> lr.grupo <- holdOutG(recid~grupo, misDatos, 10, 60)
+> lr.grupo
+\end{Sinput}
+\begin{Soutput}
+$AUCg
+ [1] 1 1 1 1 1 1 1 1 1 1
+
+$AUCg.mean
+[1] 1
+
+$ACCg
+Accuracy Accuracy Accuracy Accuracy Accuracy Accuracy Accuracy Accuracy 
+       1        1        1        1        1        1        1        1 
+Accuracy Accuracy 
+       1        1 
+
+$ACCg.mean
+[1] 1
+\end{Soutput}
+\end{Schunk}
+Como podemos observar en los resultados, la variable 'grupo' es totalmente discriminativa, ya que realiza la predicción con un 100\% de precisión, por lo que AUC = 1.
+
+Otra forma de probar esta dependencia es mediante la utilización de test estadísticos. Construimos ahora una tabla de contingencia entre la variable 'grupo' y la variable 'recidiva' para luego aplicarle un test de fisher y averiguar si las variables son dependientes:
+\begin{Schunk}
+\begin{Sinput}
+> tablaGrupo <- table(misDatos$grupo, misDatos$recid)
+> chi2.tablaGrupo <- fisher.test(tablaGrupo)
+> chi2.tablaGrupo
+\end{Sinput}
+\begin{Soutput}
+	Fisher's Exact Test for Count Data
+
+data:  tablaGrupo
+p-value < 2.2e-16
+alternative hypothesis: two.sided
+\end{Soutput}
+\end{Schunk}
+
+Hipótesis nula del test: las variables son independientes.
+Por lo tanto, al obtener como resultado un valor muy bajo de p-value, se rechaza la hipótesis nula. Es decir, podemos decir que las variables son dependientes.
+
+
+Realizaremos la estimación de modelos de una sóla variable para el esquema de validación HoldOut y evaluamos su rendimiento utilizando el área bajo la curva ROC:
+
+\subsubsection{Ajuste del modelo para la variable 'edad':}
+
+\begin{Schunk}
+\begin{Sinput}
+> lr.edad <- holdOutG(recid~edad, misDatos, 10, 60)
+> lr.edad
+\end{Sinput}
+\begin{Soutput}
+$AUCg
+ [1] 0.5972851 0.6155556 0.5200000 0.4760766 0.5533333 0.5155556 0.5158371
+ [8] 0.4397321 0.6777778 0.5902778
+
+$AUCg.mean
+[1] 0.5501431
+
+$ACCg
+ Accuracy  Accuracy  Accuracy  Accuracy  Accuracy  Accuracy  Accuracy  Accuracy 
+0.4333333 0.5333333 0.5000000 0.3666667 0.5000000 0.5000000 0.4666667 0.5333333 
+ Accuracy  Accuracy 
+0.3333333 0.4333333 
+
+$ACCg.mean
+[1] 0.46
+\end{Soutput}
+\begin{Sinput}
+> var(lr.edad$AUCg)
+\end{Sinput}
+\begin{Soutput}
+[1] 0.005041219
+\end{Soutput}
+\begin{Sinput}
+> # Estudio de la variación del AUC promedio en función del número de repeticiones:
+> edad.AUCmean<-NULL
+> for(i in seq(5,100,by=5)){
++ edad.AUCmean <- c(edad.AUCmean,holdOutG(recid~edad, misDatos, 10, 60)$AUCg.mean)
++ }
+> edad.AUCmean
+\end{Sinput}
+\begin{Soutput}
+ [1] 0.5683277 0.5552232 0.5520843 0.5675822 0.5717379 0.5559086 0.5982624
+ [8] 0.5620090 0.5521099 0.5353310 0.5200961 0.5565789 0.5702517 0.5802092
+[15] 0.5854467 0.5575660 0.5747621 0.5526709 0.5867250 0.5668972
+\end{Soutput}
+\begin{Sinput}
+> hist(edad.AUCmean, main="Variación de AUC - Edad")
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Informe-017}
+
+\subsubsection{Ajuste del modelo para la variable 'tamaño':}
+\begin{Schunk}
+\begin{Sinput}
+> lr.tam <- holdOutG(recid~tam, misDatos, 10, 60)
+> lr.tam
+\end{Sinput}
+\begin{Soutput}
+$AUCg
+ [1] 0.5837104 0.6339286 0.5959821 0.5393519 0.5475113 0.4888889 0.5533333
+ [8] 0.6116071 0.5355556 0.5550239
+
+$AUCg.mean
+[1] 0.5644893
+
+$ACCg
+ Accuracy  Accuracy  Accuracy  Accuracy  Accuracy  Accuracy  Accuracy  Accuracy 
+0.4666667 0.4000000 0.4333333 0.3666667 0.4333333 0.4666667 0.4666667 0.4000000 
+ Accuracy  Accuracy 
+0.5333333 0.4000000 
+
+$ACCg.mean
+[1] 0.4366667
+\end{Soutput}
+\begin{Sinput}
+> var(lr.tam$AUCg)
+\end{Sinput}
+\begin{Soutput}
+[1] 0.00178777
+\end{Soutput}
+\begin{Sinput}
+> # Estudio de la variación del AUC promedio en función del número de repeticiones:
+> tam.AUCmean<-NULL
+> for(i in seq(5,100,by=5)){
++ tam.AUCmean <- c(tam.AUCmean,holdOutG(recid~tam, misDatos, 10, 60)$AUCg.mean)
++ }
+> tam.AUCmean
+\end{Sinput}
+\begin{Soutput}
+ [1] 0.5829652 0.5557431 0.5771482 0.5458652 0.5745071 0.5637423 0.5844935
+ [8] 0.5874057 0.5597699 0.5516142 0.5722571 0.5473329 0.5592832 0.5743126
+[15] 0.5705490 0.6010487 0.5946120 0.5683086 0.5653503 0.5486550
+\end{Soutput}
+\begin{Sinput}
+> hist(tam.AUCmean, main="Variación de AUC - Tamaño")
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Informe-018}
+
+
+\subsubsection{Ajuste del modelo para la variable 'número de ganglios':}
+\begin{Schunk}
+\begin{Sinput}
+> lr.ngang <- holdOutG(recid~ngang, misDatos, 10, 60)
+> lr.ngang
+\end{Sinput}
+\begin{Soutput}
+$AUCg
+ [1] 0.5678733 0.6481481 0.5837104 0.5882353 0.6583710 0.7000000 0.6764706
+ [8] 0.6026786 0.7611607 0.6450893
+
+$AUCg.mean
+[1] 0.6431737
+
+$ACCg
+ Accuracy  Accuracy  Accuracy  Accuracy  Accuracy  Accuracy  Accuracy  Accuracy 
+0.5666667 0.6000000 0.5333333 0.5333333 0.6333333 0.6000000 0.4333333 0.6000000 
+ Accuracy  Accuracy 
+0.7000000 0.6666667 
+
+$ACCg.mean
+[1] 0.5866667
+\end{Soutput}
+\begin{Sinput}
+> var(lr.ngang$AUCg)
+\end{Sinput}
+\begin{Soutput}
+[1] 0.003598037
+\end{Soutput}
+\begin{Sinput}
+> # Estudio de la variación del AUC promedio en función del número de repeticiones:
+> ng.AUCmean<-NULL
+> for(i in seq(5,100,by=5)){
++ ng.AUCmean <- c(ng.AUCmean,holdOutG(recid~ngang, misDatos, 10, 60)$AUCg.mean)
++ }
+> ng.AUCmean
+\end{Sinput}
+\begin{Soutput}
+ [1] 0.6407831 0.6016029 0.6673010 0.6170317 0.6049728 0.5985364 0.6067020
+ [8] 0.5603983 0.6010700 0.6349417 0.5895617 0.6386552 0.6054701 0.6172136
+[15] 0.6199646 0.6287973 0.5918105 0.6258553 0.5939173 0.5859897
+\end{Soutput}
+\begin{Sinput}
+> hist(ng.AUCmean, main="Variación de AUC - Nº ganglios")
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Informe-019}
+
+
+\subsubsection{Ajuste del modelo para la variable 'fenotipo':}
+\begin{Schunk}
+\begin{Sinput}
+> lr.fenotipo <- holdOutG(recid~fenotipo, misDatos, 10, 60)
+> lr.fenotipo
+\end{Sinput}
+\begin{Soutput}
+$AUCg
+ [1] 0.6160714 0.5462963 0.5995475 0.4241071 0.6450893 0.6674641 0.4977679
+ [8] 0.4533333 0.5982143 0.5787037
+
+$AUCg.mean
+[1] 0.5626595
+
+$ACCg
+ Accuracy  Accuracy  Accuracy  Accuracy  Accuracy  Accuracy  Accuracy  Accuracy 
+0.4000000 0.4333333 0.4333333 0.4000000 0.3333333 0.3000000 0.5000000 0.4333333 
+ Accuracy  Accuracy 
+0.4333333 0.4000000 
+
+$ACCg.mean
+[1] 0.4066667
+\end{Soutput}
+\begin{Sinput}
+> var(lr.fenotipo$AUCg)
+\end{Sinput}
+\begin{Soutput}
+[1] 0.006571271
+\end{Soutput}
+\begin{Sinput}
+> # Estudio de la variación del AUC promedio en función del número de repeticiones:
+> fen.AUCmean<-NULL
+> for(i in seq(5,100,by=5)){
++ fen.AUCmean <- c(fen.AUCmean,holdOutG(recid~fenotipo, misDatos, 10, 60)$AUCg.mean)
++ }
+> fen.AUCmean
+\end{Sinput}
+\begin{Soutput}
+ [1] 0.6136787 0.5479042 0.6070883 0.5739718 0.6269298 0.5677033 0.5898483
+ [8] 0.6125255 0.5718642 0.5607995 0.5186127 0.6055860 0.6087924 0.5190348
+[15] 0.5821863 0.5371009 0.5788292 0.6283818 0.5869662 0.5734297
+\end{Soutput}
+\begin{Sinput}
+> hist(fen.AUCmean, main="Variación de AUC - Fenotipo")
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Informe-020}
+
+
+\chapter{Análisis de microarrays}
+\setlength{\parindent}{8pt}
+
+Los microarrays son plataformas experimentales que permiten medir la presencia y/o expresión de genes. 
+Se trata de un formato experimental basado en la síntesis de sondas, que represental los genes (o proteínas, o metabolitos), sobre un sustrato sólido (cristal, plástico, sílice, ...), y expuestos a las moléculas diana (la muestra).
+El funcionamiento de los microarrays se basa en convertir niveles de hibridación entre sondas y moléculas a niveles de expresión del gen correspondiente a la sonda. 
+El nivel de hibridación entre la sonda específica (probe) y la molécula diana (target) se indica generalmente mediante fluorescencia y se mide por análisis de imagen, e indica el nivel de expresión del gen correspondiente a la sonda muestra.
+Existen diferentes tipos de microarrays:
+\begin{itemize}
+  \item De proteínas.
+  \item De tejidos.
+  \item De DNA:
+    \begin{itemize}
+    \item Arrays de CGH.
+    \item SNPs.
+    \end{itemize}
+  \item De expresión:
+    \begin{itemize}
+    \item De cDNA.
+    \item De oligonucleótidos: GeneChip Affymetrix y otras marcas.
+    \end{itemize}
+\end{itemize}
+
+\section{Aplicaciones de los microarrays}
+Entre las numerosas aplicaciones que tienen los experimentos con microarrays podemos destacar algunas como:
+\begin{itemize}
+  \item Estudio de genes que se expresan diferencialmente entre varias condiciones (sanos/enfermos, tratados/no tratados, etc.).
+  \item Clasificación molecular en enfermedades complejas.
+  \item Identificación de genes característicos de una patología (firma o "signature").
+  \item Predicción de respuesta a un tratamiento.
+  \item Detección de mutaciones y polimorfismos de un único gen (SNP).
+\end{itemize}
+
+\section{Microarrays de 1-Color}
+Son microarrays de oligonicleótidos sintetizados in situ, con un diseño más avanzado que los de dos colores. Utilizan tecnologías desarrolladas en el entorno de la microelectrónica. Algunos rasgos distintivos de este tipo de microarrays son:
+\begin{itemize}
+  \item No se basan en hibridación competitiva: cada chip contiene muestras de un solo tipo.
+  \item Las sondas se sintetizan directamente sobre el chip, en lugar de sintetizarlas in vitro y adherirlas después.
+  \item Cada gen está representado por un grupo de sondas cortas (25 bases), en vez de por una sola sonda.
+\end{itemize}
+
+\subsection{Chips de Affymetrix}
+Affymetrix es la compañía líder en la fabricación de chips de un color; se denominan genéricamene GeneChips. 
+Algunos de ellos contienen genomas enteros con más de 50.000 grupos de sondas o "probesets". Un grupo de sondas mide niveles de mRNA de un único gen. Cada grupo consta de múltiples pares de celdillas. Tras la síntesis de los "oligos", se realiza la hibridación, depositando el mRNA marcado del tejido sobre cada chip.
+
+\section{Proceso de análisis de microarrays}
+Tras el diseño experimental y la obtenición del Chip-Affy hibridado, se obtienen imágenes del mismo que deben ser analizadas y deben pasar unos test de calidad para poder procesarlas y obtener información significativa de ellas. 
+Podemos dividir el proceso de análisis en dos grandes bloques: el prep-rocesamiento o análisis de bajo nivel, y el análisis de alto nivel. Tras este último debe contarse siempre con una interpretación y una verificación biológica de los resultados, que determinará si los resultados son coherentes y significativos o debe volver a realizarse el diseño del experimento.
+Para llevar a cabo todo este proceso de análisis de microarrays utilizaremos el software del proyecto Bioconductor.
+Bioconductor es un proyecto de software libre (código y desarrollo abiertos) basado en el lenguaje de programación R, que proporciona herramientas para el análisis de datos genómicos de alto rendimiento. El proyecto se inició en el año 2001 e incluye a muchos desarrolladores de diferentes contienentes. Incluye una gran cantidad de paquetes que presentan diferentes funcionalidades como análisis de microarrays, secuenciación y detección de SNPs, entre muchas otras.
+Los objetivos del proyecto Bioconductor son:
+\begin{itemize}
+  \item Proporcionar acceso a potentes métodos estadísticos y gráficos para el análisis de datos genómicos.
+  \item Facilitar la integración de metadatos biológicos en el análisis de datos experimentales.
+  \item Permitir el desarrollo rápido de software extensible, interoperable y escalable.
+  \item Promover la documentación de alta calidad y la investigación reproducible.
+  \item Proporcionar formación en métodos de cálculo y estadística.
+\end{itemize}
+
+La instalación de bioconductor se basa en basa en dos instrucciones:
+\begin{itemize}
+\item > source("http://www.bioconductor.org/biocLite.R")
+\item > biocLite()
+\end{itemize}
+
+Para instalar cualquiera de los paquetes pertenecientes a Biocinductor utilizamos los comandos:
+\begin{itemize}
+\item > source("http://www.bioconductor.org/biocLite.R")
+\item > biocLite("nobredelpaquete")
+\end{itemize}
+
+\subsection{Lectura de datos de expresión}
+
+Los ficheros CEL contienen el resultado del análisis de imagen sobre el proceso de hibridación de los microarrays.
+Cada fichero CEL contiene la información correspondiente a un individuo. Mediante un proceso de lectura de estos ficheros se construye una estructura que tendrá como columnas los individuos y como filas la expresión de cada gen. Toda esta "matriz" de información se guarda en un fichero RData.
+
+El paquete affy del proyecto Bioconductor proporciona métodos para el análisis y la exploración de datos a nivel de sonda en chips de Affymetrix.
+
+Utilizando el paquete affy cargamos los datos del fichero RData y los guardamos en un objeto de la clase affy. 
+A este objeto podemos añadirle tanto información fenotípica como meta-información, gracias al paquete mirna20cdf. Al hacer esto tenemos un objeto de la clase affy (mirna) el cual contrendrá un objeto que será la matriz de expresión (con id de pacientes por columnas y genes por filas) y otro objeto con una submatriz de los datos fenotípicos con las columnas que se hayan elegido (entre ellos el id de paciente), en este caso id, fenotipo y grupo. Para luego relacionar estos dos objetos utilizaremos los id de los pacientes.
+
+
+\begin{Schunk}
+\begin{Sinput}
+> library(affy)
+> load("C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining/DatExp.RData")
+> library(mirna20cdf)
+> vmd<-data.frame(labelDescription=c("id","fenotipo", "grupo"))
+> phenoData(mirna)<-new("AnnotatedDataFrame", data=misDatos[,1:3], varMetadata=vmd)
+> show(mirna)
+\end{Sinput}
+\begin{Soutput}
+AffyBatch object
+size of arrays=478x478 features (47 kb)
+cdf=miRNA-2_0 (20706 affyids)
+number of samples=75
+number of genes=20706
+annotation=mirna20
+notes=
+\end{Soutput}
+\begin{Sinput}
+> 
+\end{Sinput}
+\end{Schunk}
+
+Como podemos observar, mediante el comando 'show' obtenemos información sobre nuestro objeto de clase AffyBatch. El tamaño de los arrays es de 478x478 posiciones y, en nuestro experimento, disponemos de 75 arrays miRNA-2-0 de Affymetrix en los que se interrogan 20706 miRNAs.
+
+\section{Pre-procesamiento (Low-level analysis)}
+Los métodos gráficos permiten testar la calidad de los datos para decidir su exclusión o no del proceso de análisis. Este proceso está formado por:
+\begin{enumerate}
+\item Control de calidad. En los chips de Affymetrix basado en:
+  \begin{itemize}
+  \item Análisis de las distribuciones de los datos (density plots)
+  \item Estudio de la degradación del RNA (digestion plots)
+  \item Estudio de los cuartiles de la distribución (box plots)
+  \item Ajuste de modelos a nivel de sonda (gráficos de RLE y NUSE)
+  \end{itemize}
+\item Normalización
+  \begin{itemize}
+  \item Algoritmo RMA para los chips Affymetrix
+  \end{itemize}
+\item Filtrado de genes
+\end{enumerate}
+
+\subsection{Control de calidad}
+
+\subsubsection{1. Density plots}
+El análisis de las distribuciones de los datos permite identificar niveles de expresión diferentes entre los arrays.
+
+\begin{Schunk}
+\begin{Sinput}
+> #PRE-PROCESAMIENTO (LOW-LEVEL ANALYSIS)
+> #control de calidad - density plots
+> 
+> hist(mirna, main="Signal Distribution")
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Informe-022}
+
+
+Si alguna de las curvas estuviera claramente desplazada, indicaría que, por algún motivo, la lectura de intensidad del microarray no está bien y conviene eliminar la información de ese microarray del experimento.
+
+\subsubsection{2. Digestion plots}
+Los gráficos de degradación de RNA permiten evaluar la calidad de las muestras usadas en todos los arrays.
+
+\begin{Schunk}
+\begin{Sinput}
+> #control de calidad- digestion plots
+> 
+> deg<-AffyRNAdeg(mirna)
+> plotAffyRNAdeg(deg)
+> 
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Informe-023}
+
+Si alguna de las curvas cayera notablemente hacia abajo (o no se mantuviera prácticamente horizontal) indicaría que la muestra de ese microarray no ha hibridado de forma correcta. Convendría eliminar la información de ese microarray del experimento.
+
+\subsubsection{3. Box plots}
+Los diagramas de cajas permiten estudiar los cuartiles de las distribuciones de los valores de expresión en cada array.
+Se esperan valores similares para las medianas si no existe anomalía en la distribución de los datos.
+Para tener una mejor visualización de los datos, se ha dividido en dos diagramas de cajas el conjunto:
+
+
+\begin{Schunk}
+\begin{Sinput}
+> #control de calidad- box plots
+> 
+> #par: sirve para ajustar la visibilidad de las etiquetas
+> #las: sirve para poner las etiquetas verticalmente 
+> opt<-par(las=2,cex.axis=0.7)
+> boxplot(mirna[1:40,], las=2, col="red",main= "Raw data")
+> par(opt)
+> 
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Informe-024}
+
+\begin{Schunk}
+\begin{Sinput}
+> opt<- par(las=2, cex.axis=0.7)
+> boxplot(mirna[41:75,], las=2, col="red",main="Raw data")
+> par(opt)
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Informe-025}
+
+El posterior proceso de normalización permite eliminar las anomalías y preparar los datos para su comparación mediante el análisis de expresión diferencial.
+
+\subsubsection{4. RLE}
+Un modelo lineal de datos a nivel de sonda permite analizar las distribuciones de los RLE (valores de expresión log-relativa).
+Los RLE se calculan para cada conjunto de sondas comparando el valor de expresión en cada array respecto la mediana del valor de expresión para ese conjunto de sondas a lo largo de todos los arrays.
+El análisis de la distribución de los RLE permite comprobar si los genes están variando sus valores de expresión para los diferentes arrays.
+
+\begin{Schunk}
+\begin{Sinput}
+> #control de calidad- RLE
+> library(affyPLM)
+> Pset<-fitPLM(mirna)
+> RLE(Pset, main= "Relative Log Expression", las=3, cex.axis=0.7, ylim=c(-0.5,0.5), outline=FALSE, col="mistyrose", whisklty=0, stapletlty=0)
+> 
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Informe-026}
+
+
+\subsubsection{5. NUSE}
+Los errores estándares desescalados y normalizados (NUSE) derivados del ajuste se usan también como medida de calidad. Arrays con distribuciones desplazadas y dispersión mayor que el resto podrían alterar el posterior análisis de expresión diferencial.
+
+\begin{Schunk}
+\begin{Sinput}
+> #control de calidad-NUSE
+> 
+> NUSE(Pset, main="Normalized Unscaled Standard Errors", las=3, cex.axis=0.7, ylim=c(0.95, 1.1), outline=FALSE, col="lightblue", whisklty=0, staplelty=0)
+> 
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Informe-027}
+
+Las cajas del "boxplot" que estén significativamente desplazadas de la línea media probablemente generan ruido y normalmente conviene eliminar estos casos del experimento. 
+En nuestro caso, podemos afirmar que se encuentran significativamente desplazadas las cajas de las muestras 7, 28, 43 y 63.
+
+\subsection{Normalización de los datos}
+
+La normalización se refiere a los métodos utilizados para eliminar variaciones sistemáticas en los datos de microarrays. En chips de Affymetrix, el método comúnmente usado en la literatura es el algoritmo RMA (promedio de multiarray robusto), el cual se basa en:
+\begin{enumerate}
+\item Corrección de fondo, que ajusta las lecturas de intensidad para señales no específicas.
+\item Normalización entre arrays, para controlar la variabilidad técnica del gen experimento.
+\item Resumen de expresión, que calcula el nivel de expresión del gen a partir de todas las sondas que hacen diana en el tránscrito.
+\end{enumerate}
+
+En nuestro experimento, eliminaremos los casos conflictivos mencionados anteriormente en el control de calidad NUSE.
+La visualización posterior mediante un diagrama de cajas permite comprobar los resultados del proceso de normalización.
+
+\begin{Schunk}
+\begin{Sinput}
+> #normalización de datos
+> 
+> idrem<-c(-7,-28,-43,-63)
+> mirna<-mirna[,idrem]
+> samples<-sampleNames(protocolData(mirna))
+> sampleNames(phenoData(mirna))<-samples
+> eset_rma<-rma(mirna)
+\end{Sinput}
+\begin{Soutput}
+Background correcting
+Normalizing
+Calculating Expression
+\end{Soutput}
+\begin{Sinput}
+> boxplot(eset_rma,main="RMA",names=sampleNames(eset_rma),cex.axis=0.65,las=3,col="lightgreen")
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Informe-028}
+
+Para poder realizar la normalización de datos mediante el algoritmo RMA debemos asegurarnos de que los nombres de las muestras entre los datos de expresión (protocolData) y los datos fenotipicos (phenoData), coinciden. Como esto no era así en un principio, los hemos igualado utilizando una variable (samples).
+
+
+\subsection{Filtrado de datos}
+
+El objetivo del filtrado de datos es eliminar del estudio aquellos genes que no interesan para el posterior análisis de alto nivel.
+Existen filtrados de tipo específico y no-específico. Los del segundo tipo son típicos para excluir genes cuyos valores de expresión no cambian durante el experimento.
+En nuestro caso filtraremos sólo los genes hibridados con sonda de humanos, a lo cual hace referencia 'hsa'. 
+
+\begin{Schunk}
+\begin{Sinput}
+> #filtrado de datos
+> library(genefilter)
+> eset_rma<-eset_rma[grep("(^hsa|^v11_hsa)",rownames(exprs(eset_rma))),]
+> eset_rma_filtered<-nsFilter(eset_rma,remove.dupEntrez=FALSE,require.entrez=FALSE,var.cutof=0.66)$eset
+> 
+\end{Sinput}
+\end{Schunk}
+
+
+\subsubsection{Análisis del agrupamiento mediante PCA}
+
+Se trata de realizar una agrupación de las muestras en base a los datos que capturan la máxima variabilidad de los datos.
+Una visualización de los dos primeros componentes del análisis PCA muestra la estructura general de los datos y la agrupación de los experimentos.
+En nuestro gráfico podremos ver, diferenciados por colores, los grupos a los que pertenece cada individuo y, mediante etiquetas, el fenotipo de cada uno.
+
+\begin{Schunk}
+\begin{Sinput}
+> #análisis del agrupamiento mediante PCA
+> library(affycoretools)
+> etq<-pData(eset_rma_filtered)[,2]
+> levels(etq)<-c(" ","BL","H2","LH","LA","LB")
+> plotPCA(eset_rma_filtered, groups=pData(eset_rma_filtered)[,3],groupnames=levels(pData(eset_rma_filtered)[,3]),addtext=etq,legend=FALSE)
+> 
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Informe-030}
+
+Podemos observar que el PCA ha conseguido agrupar las variables en dos grandes grupos(PC1 y PC2), que discriminan algo entre los pacientes de grupo A (rojos) y los pacientes del grupo B (verdes). El mayor problema que se observa es que los pacientes del grupo C (azules) están mezclados con todos. Esto tiene un importante significado, ya que este grupo representa a los pacientes que sufren recidiva tardía.
+
+\section{Análisis de alto nivel}
+
+Podemos clasificar el análisis de alto nivel en:
+\begin{enumerate}
+  \item Class comparison
+  \begin{itemize}
+    \item Selección de genes diferencialmente expresados entre diferentes condiciones.
+    \item Métodos basados en modelos (ANOVA) y tests globales (SAM y limma - modelos lineales y Bayes empírico).
+    \item Diagramas tipo "volcano" y diagramas Venn.
+  \end{itemize}
+  \item Class discovery (Clustering)
+  \begin{itemize}
+    \item No supervisado: HC, SOM, K-means.
+    \item Reducción dimensionalidad: PCA, MDS.
+  \end{itemize}
+  \item Class prediction (modelos predictivos)
+  \begin{itemize}
+    \item Estadística: regresión logística, regresión de Cox.
+    \item Machine Learning: RRNN (redes neuronales), SVM (máquinas de soporte vectorial), DT (árboles de decisión), etc.
+  \end{itemize}
+\end{enumerate}
+
+\subsection{Class comparison}
+
+La selección de genes se realiza en base a estadísticos y tests de comparaciones múltiples.
+Cuando el número de muestras es pequeño se utiliza el estadístico-t modificado para el análisis de expresión diferencial.
+El resultado del análisis de expresión diferencial es una lista ordenada por le p-valor y el q-valor (p-valor ajustado).
+
+\begin{Schunk}
+\begin{Sinput}
+> #class comparison
+> library(limma)
+> my.eset<-eset_rma_filtered
+> npac<-length(sampleNames(my.eset))
+> p.value.cutoff<-0.05
+> design<-as.matrix(data.frame(A=rep(0,npac), B=rep(0,npac), C=rep(0,npac)))
+> design[pData(my.eset)$grupo=="Grupo A","A"]<-1
+> design[pData(my.eset)$grupo=="Grupo B","B"]<-1
+> design[pData(my.eset)$grupo=="Grupo C","C"]<-1
+> fit1<-lmFit(my.eset, design)
+> cont.matrix<-makeContrasts(AvsB=B-A,AvsC=C-A,BvsC=C-B,AvsBC=(B*0.7103+C*0.28947)-A,ACvsB=B-(A*0.75+C*0.25),levels=design)
+> fit1.main<-contrasts.fit(fit1,cont.matrix)
+> fit1.main<-eBayes(fit1.main)
+> t4<-topTable(fit1.main, number=nrow(fit1.main), coef="AvsBC", adjust="fdr")
+> t4
+\end{Sinput}
+\begin{Soutput}
+                              logFC   AveExpr           t      P.Value
+hsa-miR-1202_st         0.932235317  6.930249  5.14644051 1.993575e-06
+hsa-miR-3197_st         0.840765540  8.079849  4.89521285 5.328601e-06
+hsa-miR-3185_st         0.913225618  9.241427  4.83320366 6.768987e-06
+hsa-miR-1225-5p_st      0.880507690  7.297826  4.73883423 9.715772e-06
+hsa-miR-939_st          0.853831365  7.087687  4.72210880 1.035482e-05
+hsa-miR-1909_st         0.864744185  7.690435  4.57977835 1.772776e-05
+hsa-miR-1224-5p_st      0.852408613  7.081658  4.57031318 1.836787e-05
+hsa-miR-1268_st         0.815626739 10.028438  4.55088524 1.975281e-05
+hsa-miR-660_st         -0.906838372  4.227086 -4.54630822 2.009356e-05
+hsa-miR-3180-3p_st      0.824751749  6.219487  4.44408341 2.937480e-05
+hsa-miR-150-star_st     0.780121169  6.743032  4.43440320 3.044342e-05
+hsa-miR-625_st         -1.194166974  3.940068 -4.40754071 3.360984e-05
+hsa-miR-92b-star_st     0.795969151  7.453412  4.38318637 3.675456e-05
+hsa-miR-3188_st         0.779604952  6.411627  4.38158977 3.697038e-05
+hsa-miR-1908_st         0.727087824 11.016968  4.36848925 3.878815e-05
+hsa-miR-663_st          0.787267245  9.972565  4.34611781 4.209409e-05
+hsa-miR-652_st         -1.040068179  6.154408 -4.32107242 4.611860e-05
+hsa-miR-92a_st         -0.724454069  8.600097 -4.18906495 7.428133e-05
+hsa-miR-423-3p_st      -0.863128981  6.093552 -4.15425837 8.411758e-05
+hsa-miR-572_st          1.015253874  8.558562  4.13142985 9.123797e-05
+hsa-miR-3141_st         0.735164379  8.801415  4.11962376 9.514461e-05
+hsa-miR-3162_st         0.794011051  8.499922  4.11142376 9.795224e-05
+hsa-miR-1275_st         0.629459446  7.598373  4.09756869 1.028783e-04
+hsa-miR-4281_st         0.704044560 11.018851  4.06739774 1.144432e-04
+hsa-miR-373-star_st     0.678250966  3.857493  4.04944453 1.219078e-04
+hsa-miR-1228-star_st    0.664444091 11.036847  3.99758201 1.461923e-04
+hsa-miR-200a-star_st   -0.843688069  3.555439 -3.98652734 1.519383e-04
+hsa-miR-671-5p_st       0.624796407  6.518685  3.88471827 2.160884e-04
+hsa-miR-762_st          0.513459732 12.004606  3.87100811 2.264950e-04
+hsa-miR-4322_st         0.660405234  5.095996  3.85995232 2.352345e-04
+hsa-miR-665_st          0.728144445  5.591042  3.84715467 2.457537e-04
+hsa-miR-149-star_st     0.499675360 11.938711  3.84438347 2.480901e-04
+hsa-miR-371-5p_st       0.718206135  5.951377  3.77945541 3.093137e-04
+hsa-miR-532-5p_st      -0.796622617  5.795092 -3.75109885 3.403588e-04
+hsa-miR-1469_st         0.599939295 11.454754  3.74981134 3.418366e-04
+hsa-miR-1207-5p_st      0.606672612 10.024774  3.71371956 3.858445e-04
+hsa-miR-1281_st         0.687503176  7.532603  3.69700341 4.080095e-04
+hsa-miR-149_st         -1.285637523  4.271160 -3.66471681 4.542981e-04
+hsa-miR-3178_st         0.628552572  9.224269  3.66284124 4.571352e-04
+hsa-miR-1307_st         0.560038922  7.044641  3.66139892 4.593284e-04
+hsa-miR-663b_st         0.840828139  6.054956  3.61341109 5.382753e-04
+hsa-miR-30c_st         -0.900214419  6.711727 -3.61102295 5.425231e-04
+hsa-miR-940_st          0.574818385  5.061815  3.60630657 5.510058e-04
+hsa-miR-345_st         -0.876492921  5.844740 -3.60011788 5.623279e-04
+hsa-miR-125a-5p_st     -0.774679527  7.036146 -3.58893414 5.833507e-04
+hsa-miR-28-3p_st       -0.842276612  5.082358 -3.57934715 6.019637e-04
+hsa-miR-1308_st         0.635658243 11.622680  3.57321446 6.141644e-04
+hsa-miR-4298_st         0.582148232  8.235986  3.57131262 6.179954e-04
+hsa-miR-3187_st         0.742411530  4.723341  3.53585120 6.937167e-04
+hsa-miR-1231_st         0.692004442  5.681367  3.53469890 6.963189e-04
+hsa-miR-3195_st         0.625584872  6.554828  3.51445853 7.435636e-04
+hsa-miR-20b_st         -1.051069730  5.664892 -3.47507991 8.443085e-04
+hsa-miR-4327_st         0.567038146  5.568882  3.46364412 8.759027e-04
+hsa-miR-330-3p_st      -0.710972753  3.736001 -3.45157688 9.104515e-04
+hsa-miR-1471_st         0.699527183  3.952442  3.44494123 9.299942e-04
+hsa-miR-17-star_st     -0.806667228  3.419755 -3.44449543 9.313212e-04
+hsa-miR-574-3p_st      -0.735568750  5.697789 -3.42436611 9.931395e-04
+hsa-miR-659_st          0.558076902  4.213460  3.40681818 1.050171e-03
+hsa-miR-4299_st         0.507275531  7.014329  3.39410004 1.093422e-03
+hsa-miR-339-5p_st      -0.776803443  3.884259 -3.39041040 1.106280e-03
+hsa-miR-3154_st         0.570799326  6.171460  3.35918971 1.220934e-03
+hsa-miR-18b_st         -0.612197419  2.079037 -3.33094931 1.334197e-03
+hsa-miR-99b_st         -0.520129478  8.585121 -3.31571255 1.399341e-03
+hsa-miR-15a_st         -0.989427711  4.894535 -3.31373596 1.408008e-03
+hsa-miR-500-star_st    -0.654619062  4.469500 -3.31187634 1.416208e-03
+hsa-miR-99b-star_st    -0.736621838  4.366322 -3.29212309 1.506123e-03
+hsa-miR-498_st          0.589600982  4.012144  3.28023287 1.562803e-03
+hsa-miR-339-3p_st      -0.530164880  4.920080 -3.26721447 1.627155e-03
+hsa-miR-4257_st         0.543079155  5.433858  3.25428790 1.693507e-03
+hsa-miR-622_st          0.601611300  3.261697  3.23274365 1.809762e-03
+hsa-miR-106b-star_st   -0.652719914  4.941356 -3.21742036 1.896954e-03
+hsa-miR-98_st          -0.655698013  3.832042 -3.20248143 1.985733e-03
+hsa-miR-30a-star_st    -1.259956855  4.173884 -3.18751221 2.078580e-03
+hsa-miR-885-3p_st       0.586189013  5.790355  3.18525311 2.092940e-03
+hsa-miR-28-5p_st       -0.662321494  6.016216 -3.17431078 2.163817e-03
+hsa-miR-1228_st         0.575230752  5.077796  3.13896596 2.408378e-03
+hsa-miR-497_st         -0.822565803  5.736773 -3.13490263 2.438091e-03
+hsa-miR-30d_st         -0.689130820  6.130703 -3.13157043 2.462712e-03
+hsa-miR-602_st          0.537055493  5.134675  3.13133461 2.464463e-03
+hsa-miR-224_st         -0.938694576  2.210481 -3.11123187 2.618089e-03
+hsa-miR-612_st          0.758746263  3.685274  3.09918013 2.714421e-03
+hsa-miR-637_st          0.539340590  3.662619  3.09008353 2.789308e-03
+hsa-miR-1226-star_st    0.504320029  4.449881  3.08531340 2.829342e-03
+hsa-miR-346_st          0.635640780  3.806931  3.07140719 2.949127e-03
+hsa-miR-151-3p_st      -0.634511512  6.537350 -3.06377967 3.016815e-03
+hsa-miR-532-3p_st      -0.540690594  3.757268 -3.06364547 3.018019e-03
+hsa-miR-4286_st        -0.880529378  6.384456 -3.04430678 3.196231e-03
+hsa-miR-4270_st         0.528657005 11.360205  3.03206972 3.314000e-03
+hsa-miR-181a-2-star_st -0.689532425  3.016109 -3.03134919 3.321058e-03
+hsa-miR-17_st          -0.605776122  8.901756 -3.00705736 3.567355e-03
+hsa-miR-1910_st         0.569593167  5.348801  2.99752597 3.668542e-03
+hsa-miR-1246_st         0.556987906  6.693242  2.97792134 3.885084e-03
+hsa-miR-30b_st         -0.888167722  5.816103 -2.97450693 3.923987e-03
+hsa-miR-106a_st        -0.604817978  8.631071 -2.94299697 4.300413e-03
+hsa-miR-629_st         -0.615708391  4.035458 -2.93709910 4.374477e-03
+hsa-let-7b_st          -0.459153777 12.992278 -2.93050521 4.458676e-03
+hsa-miR-2277_st         0.482599247  2.942276  2.92010093 4.594581e-03
+hsa-miR-129-5p_st       0.541311566  3.151014  2.91691724 4.636926e-03
+hsa-miR-362-5p_st      -0.760654223  4.454610 -2.90640977 4.779252e-03
+hsa-miR-34a_st         -0.582200481  6.998778 -2.88178238 5.128771e-03
+hsa-miR-30e_st         -0.656242964  3.076832 -2.85834849 5.483076e-03
+hsa-miR-198_st          0.473017550  5.321552  2.82814589 5.972941e-03
+hsa-miR-3137_st         0.496426238  5.277517  2.82718285 5.989202e-03
+hsa-miR-26b_st         -0.595290199  3.314080 -2.82647167 6.001238e-03
+hsa-miR-20a_st         -0.627169401  8.190138 -2.82201796 6.077112e-03
+hsa-miR-1914-star_st    0.456320606  4.497447  2.82008081 6.110388e-03
+hsa-miR-331-3p_st      -0.521056386  3.775428 -2.81484490 6.201169e-03
+hsa-miR-1825_st         0.473019677  4.529808  2.80967295 6.292055e-03
+hsa-miR-1180_st        -0.602231889  4.262023 -2.80629166 6.352133e-03
+hsa-miR-509-3-5p_st    -0.419299597  2.696054 -2.79381370 6.578422e-03
+hsa-miR-1909-star_st    0.574624101  3.641303  2.76247917 7.179638e-03
+hsa-miR-513a-5p_st      0.529124565  5.794572  2.75846742 7.260141e-03
+hsa-miR-3177_st         0.398153681  4.350381  2.75587655 7.312570e-03
+hsa-miR-1271_st        -0.490556690  3.131611 -2.75094017 7.413421e-03
+hsa-miR-557_st          0.508547824  3.880103  2.73738815 7.696868e-03
+hsa-miR-3147_st         0.454534285  5.848674  2.73659135 7.713837e-03
+hsa-miR-1260b_st       -0.602351754  6.375968 -2.73295075 7.791808e-03
+hsa-miR-30e-star_st    -0.473820702  2.472581 -2.73014450 7.852400e-03
+hsa-miR-1208_st         0.451403776  2.977001  2.70113732 8.504415e-03
+hsa-miR-3175_st         0.436133998  6.635197  2.69890915 8.556486e-03
+hsa-miR-3192_st         0.430978863  3.134801  2.69734554 8.593199e-03
+hsa-miR-505-star_st    -0.629589862  3.602267 -2.69175215 8.725712e-03
+hsa-miR-1913_st         0.414751744  3.713797  2.69028651 8.760741e-03
+hsa-miR-128_st         -0.690654535  3.010315 -2.68666858 8.847759e-03
+hsa-miR-3122_st         0.397179953  3.858650  2.68416247 8.908497e-03
+hsa-miR-141_st         -0.843260100  4.987415 -2.67912755 9.031671e-03
+hsa-miR-324-3p_st      -0.501917602  4.351050 -2.64388775 9.938089e-03
+hsa-miR-132_st         -0.588956164  4.351752 -2.64365366 9.944377e-03
+hsa-miR-4253_st         0.404474997  4.818914  2.63809151 1.009485e-02
+hsa-miR-1238_st         0.395041058  3.584736  2.63579977 1.015745e-02
+hsa-miR-564_st          0.366842268  3.793605  2.62719662 1.039560e-02
+hsa-miR-1273d_st        0.548446166  4.161022  2.62337639 1.050297e-02
+hsa-miR-3194_st         0.435233695  3.624532  2.62300337 1.051351e-02
+hsa-miR-19b_st         -0.706347297  5.669139 -2.60861664 1.092730e-02
+hsa-miR-1972_st         0.432934217  5.822272  2.59043553 1.147132e-02
+hsa-miR-623_st          0.485106535  3.563029  2.58959908 1.149693e-02
+hsa-miR-4321_st         0.407263759  2.653370  2.58149395 1.174776e-02
+hsa-miR-148a_st        -0.669786103  3.131138 -2.54830093 1.282744e-02
+hsa-miR-1973_st         0.411729261  6.113818  2.53616837 1.324391e-02
+hsa-miR-3181_st         0.386900443  2.430240  2.51576928 1.397168e-02
+hsa-miR-29c_st         -0.515559989  2.368294 -2.50122675 1.451227e-02
+hsa-miR-200b-star_st   -0.495927558  5.783179 -2.49968862 1.457054e-02
+hsa-let-7c_st          -0.391744304 11.860964 -2.48834297 1.500684e-02
+hsa-miR-100_st         -0.671042784  6.951314 -2.48788096 1.502485e-02
+hsa-miR-130a_st        -0.475946573  6.158702 -2.48783120 1.502679e-02
+hsa-miR-296-3p_st       0.453834160  5.016344  2.48287819 1.522115e-02
+hsa-miR-195_st         -0.512665835  8.168979 -2.44452459 1.680415e-02
+hsa-miR-1263_st         0.424519716  4.572852  2.43142179 1.737781e-02
+hsa-miR-1254_st         0.525359107  4.092209  2.42518026 1.765718e-02
+hsa-miR-143-star_st    -0.510173289  2.690512 -2.42015283 1.788512e-02
+hsa-miR-135a-star_st    0.486487160  5.504564  2.41709212 1.802517e-02
+hsa-miR-370_st          0.354503556  4.576929  2.41302962 1.821258e-02
+hsa-miR-92b_st         -0.479743226  4.350698 -2.41088765 1.831209e-02
+hsa-miR-1182_st         0.426612532  5.114693  2.40514884 1.858110e-02
+hsa-miR-1183_st         0.419700998  5.616690  2.39740825 1.894952e-02
+hsa-miR-379_st         -0.495528379  3.156184 -2.39190583 1.921536e-02
+hsa-miR-421_st         -0.492684644  3.843971 -2.36328637 2.065236e-02
+hsa-miR-943_st          0.422884033  2.803484  2.36123630 2.075887e-02
+hsa-miR-200a_st        -0.825602571  5.230449 -2.34677403 2.152424e-02
+hsa-miR-760_st          0.355687614  3.843908  2.33412017 2.221434e-02
+hsa-miR-31_st          -0.813913092  5.767650 -2.32644829 2.264223e-02
+hsa-miR-148b_st        -0.427167393  2.259046 -2.28758660 2.492379e-02
+hsa-miR-483-5p_st       0.419988643  6.754342  2.28116132 2.531997e-02
+hsa-miR-491-5p_st      -0.421959008  3.094171 -2.27473128 2.572200e-02
+hsa-miR-10a_st         -0.905019171  4.551435 -2.27143919 2.593001e-02
+hsa-miR-30a_st         -0.756271396  6.998109 -2.26062875 2.662351e-02
+hsa-miR-3172_st        -0.539603609  5.859417 -2.26028319 2.664594e-02
+hsa-miR-363_st         -0.546452702  2.462044 -2.25488579 2.699853e-02
+hsa-miR-192_st         -0.502129046  2.882181 -2.25129372 2.723545e-02
+hsa-miR-23b_st         -0.424296592  9.858689 -2.25061458 2.728045e-02
+hsa-let-7g_st          -0.460180807  7.363802 -2.23954321 2.802331e-02
+hsa-miR-183_st         -0.659142127  3.885845 -2.22118576 2.929426e-02
+hsa-miR-18a_st         -0.768753438  4.318153 -2.20647399 3.034903e-02
+hsa-miR-27b_st         -0.609231750  6.639526 -2.20494918 3.046023e-02
+hsa-miR-378c_st        -0.510041459  4.820986 -2.20232583 3.065238e-02
+hsa-miR-630_st          0.339925397  2.725743  2.19398438 3.127044e-02
+hsa-miR-500_st         -0.498493045  3.843534 -2.19314517 3.133322e-02
+hsa-miR-22_st          -0.457905726  7.796383 -2.19080746 3.150868e-02
+hsa-miR-885-5p_st       0.404803125  3.411767  2.17782953 3.249849e-02
+hsa-miR-29b-2-star_st  -0.670209462  3.920035 -2.17771705 3.250719e-02
+hsa-miR-4287_st         0.347591229  2.895091  2.17443366 3.276193e-02
+hsa-miR-452_st         -0.432100911  2.508647 -2.16868270 3.321232e-02
+hsa-miR-425_st         -0.460249993  7.778400 -2.16326388 3.364164e-02
+hsa-miR-127-3p_st      -0.659666322  4.532172 -2.15772817 3.408520e-02
+hsa-miR-542-5p_st      -0.439252413  2.719302 -2.13880745 3.563998e-02
+hsa-let-7b-star_st      0.309574425  3.149788  2.13870445 3.564861e-02
+hsa-miR-615-3p_st      -0.396621307  2.631838 -2.13743296 3.575530e-02
+hsa-miR-106b_st        -0.460430945  7.936890 -2.11900091 3.733328e-02
+hsa-miR-4271_st         0.450111483  6.394737  2.11747213 3.746684e-02
+hsa-miR-1292_st         0.346942654  3.767323  2.10134142 3.890148e-02
+hsa-miR-378_st         -0.455657917  6.040757 -2.07719856 4.113753e-02
+hsa-miR-487b_st        -0.382582753  2.954034 -2.05421782 4.336823e-02
+v11_hsa-miR-1300_st     0.430165352  4.345351  2.04057743 4.474095e-02
+hsa-miR-15b_st         -0.408339343  6.728997 -2.03282398 4.553777e-02
+hsa-miR-4290_st         0.330457189  3.101505  2.01666100 4.723811e-02
+hsa-miR-1237_st         0.315585839  2.866583  1.99461150 4.964529e-02
+hsa-miR-3191_st         0.286528323  2.663196  1.95508227 5.422371e-02
+hsa-miR-3152_st         0.437056730  4.847723  1.94664893 5.524569e-02
+hsa-miR-769-5p_st      -0.379941652  2.624733 -1.93877368 5.621477e-02
+hsa-miR-187_st         -0.742860604  2.655824 -1.92097104 5.845875e-02
+hsa-miR-3189_st         0.304702053  2.628638  1.91315814 5.946724e-02
+hsa-miR-1260_st        -0.329414822  4.158965 -1.91287535 5.950402e-02
+hsa-miR-1296_st         0.298828968  2.639729  1.91232884 5.957515e-02
+hsa-miR-4314_st         0.318835353  4.285484  1.89857670 6.138881e-02
+hsa-miR-320e_st        -0.371349551  5.324616 -1.89743178 6.154188e-02
+hsa-miR-675_st          0.357941196  4.973022  1.86505727 6.600554e-02
+hsa-miR-152_st         -0.416977864  5.950521 -1.84319376 6.917142e-02
+hsa-miR-365-star_st     0.297251319  4.280299  1.83471179 7.043341e-02
+hsa-miR-224-star_st    -0.539367097  2.726338 -1.83201659 7.083842e-02
+hsa-miR-181d_st        -0.439559071  3.864899 -1.82092358 7.252596e-02
+hsa-miR-510_st          0.328186252  4.092855  1.80684375 7.471606e-02
+hsa-miR-191-star_st     0.332828769  4.179676  1.79406718 7.675085e-02
+hsa-miR-181c_st        -0.353748805  2.862132 -1.78751922 7.781140e-02
+hsa-miR-608_st          0.243082423  2.420862  1.77729361 7.949192e-02
+hsa-miR-1274b_st       -0.500790999  7.671364 -1.76945913 8.079974e-02
+hsa-miR-1301_st        -0.361935079  4.761211 -1.75319138 8.357227e-02
+hsa-miR-424-star_st    -0.393411015  3.142623 -1.74955701 8.420230e-02
+hsa-miR-378-star_st    -0.330966861  2.749617 -1.74039291 8.580834e-02
+hsa-miR-432_st         -0.340553217  3.804069 -1.73925348 8.600978e-02
+hsa-miR-30c-2-star_st  -0.441364078  3.906156 -1.73557892 8.666207e-02
+hsa-miR-193b_st        -0.465516017  6.796543 -1.73420085 8.690775e-02
+hsa-miR-29a_st         -0.343577172  7.238096 -1.72368297 8.880176e-02
+hsa-miR-145_st         -0.385174077  9.328077 -1.72152948 8.919370e-02
+hsa-miR-3153_st         0.357850320  4.201765  1.71395583 9.058344e-02
+hsa-miR-382_st         -0.363160921  3.343070 -1.70897542 9.150697e-02
+hsa-miR-30b-star_st    -0.314022575  3.290890 -1.69254278 9.460899e-02
+hsa-miR-1272_st         0.353221518  3.738894  1.66941039 9.912082e-02
+hsa-miR-615-5p_st       0.226991661  2.778758  1.65791055 1.014281e-01
+hsa-miR-720_st         -0.344128508 11.007340 -1.64882231 1.032822e-01
+hsa-miR-3190-5p_st      0.297345771  3.290383  1.63722763 1.056875e-01
+hsa-miR-214-star_st    -0.386853561  2.661868 -1.63258250 1.066637e-01
+hsa-miR-197_st         -0.276685933  3.334765 -1.61544724 1.103281e-01
+hsa-miR-125b_st        -0.348917055  8.799159 -1.61500159 1.104248e-01
+hsa-miR-24-2-star_st   -0.293573877  3.312454 -1.61280692 1.109017e-01
+hsa-miR-194_st         -0.462396737  4.145139 -1.57649112 1.190365e-01
+hsa-miR-3138_st         0.274564206  5.718193  1.57420991 1.195630e-01
+hsa-miR-513c_st         0.243650639  2.552157  1.56772855 1.210691e-01
+hsa-miR-886-3p_st      -0.443406939  4.965755 -1.55858309 1.232199e-01
+hsa-miR-205_st         -0.765376739  8.311663 -1.55376047 1.243663e-01
+hsa-miR-483-3p_st       0.200673266  2.346219  1.54391603 1.267327e-01
+hsa-miR-3121_st         0.438564492  4.395945  1.51957194 1.327382e-01
+hsa-miR-1270_st        -0.227072450  2.522222 -1.49068226 1.401541e-01
+hsa-miR-3131_st         0.259543755  5.271695  1.46957426 1.457750e-01
+hsa-miR-574-5p_st      -0.287264005  4.754149 -1.46301824 1.475562e-01
+hsa-miR-422a_st        -0.275572203  4.481345 -1.45898013 1.486617e-01
+hsa-miR-29c-star_st    -0.273823119  2.028483 -1.45448207 1.499008e-01
+hsa-miR-718_st          0.215648873  3.039484  1.44692618 1.520001e-01
+hsa-miR-1538_st         0.183719694  2.155977  1.43016193 1.567395e-01
+hsa-miR-143_st         -0.262188830  8.494490 -1.42982656 1.568355e-01
+hsa-miR-3163_st         0.342587765  4.788537  1.42078044 1.594411e-01
+hsa-miR-146a_st        -0.497480463  6.284087 -1.41683202 1.605888e-01
+hsa-miR-409-3p_st      -0.276292904  3.351382 -1.36359808 1.766907e-01
+hsa-miR-513b_st         0.240773697  3.199290  1.35490723 1.794321e-01
+hsa-miR-206_st          0.348660746  2.646943  1.33603161 1.854971e-01
+hsa-miR-99a_st         -0.380067479  7.734500 -1.33301844 1.864794e-01
+hsa-miR-4274_st         0.267496989  3.438232  1.32685222 1.885019e-01
+hsa-miR-125b-1-star_st  0.265622479  3.165238  1.31892491 1.911261e-01
+hsa-miR-342-5p_st      -0.470776613  5.402545 -1.31853421 1.912561e-01
+hsa-miR-3116_st         0.204633357  2.761779  1.30415950 1.960869e-01
+hsa-miR-202_st          0.311866514  5.227327  1.29911385 1.978040e-01
+hsa-miR-181a-star_st   -0.214838449  2.538024 -1.28839662 2.014884e-01
+hsa-miR-200b_st        -0.396895317  6.093115 -1.28473383 2.027592e-01
+hsa-miR-1255b_st        0.254387001  2.882274  1.28328187 2.032646e-01
+hsa-miR-3144-5p_st      0.188150218  2.125252  1.27232844 2.071076e-01
+hsa-miR-188-5p_st       0.240746802  4.399559  1.27010067 2.078957e-01
+hsa-miR-3132_st         0.234840083  3.255447  1.26034574 2.113729e-01
+hsa-miR-1291_st         0.220124639  3.432948  1.24232888 2.179075e-01
+hsa-miR-184_st          0.529181098  4.728840  1.23521837 2.205268e-01
+hsa-miR-548x_st         0.209012413  3.467370  1.21316740 2.287960e-01
+hsa-miR-182_st         -0.238869460  8.352252 -1.20576214 2.316228e-01
+hsa-miR-199a-5p_st     -0.334767117  7.306215 -1.20379524 2.323779e-01
+hsa-miR-342-3p_st      -0.326216561  9.141917 -1.19699572 2.350019e-01
+hsa-miR-146b-5p_st     -0.339240954  5.267063 -1.18990813 2.377598e-01
+hsa-miR-125b-2-star_st -0.248927391  3.245585 -1.18789672 2.385466e-01
+hsa-miR-708_st         -0.362831957  5.284322 -1.16817892 2.463599e-01
+hsa-miR-203_st         -0.472342666  4.287367 -1.15402290 2.520809e-01
+hsa-miR-449b-star_st    0.161395291  2.926450  1.13723147 2.589887e-01
+hsa-miR-221-star_st    -0.151599717  2.371498 -1.13188290 2.612168e-01
+hsa-miR-548q_st         0.254884719  3.260011  1.09816238 2.755756e-01
+hsa-miR-2276_st         0.176686068  4.682082  1.09685794 2.761419e-01
+hsa-miR-765_st          0.273098511  4.987142  1.07741136 2.846800e-01
+hsa-miR-34c-3p_st       0.164720690  2.791799  1.06992426 2.880153e-01
+hsa-miR-196a_st        -0.470980771  6.200270 -1.06239974 2.913943e-01
+hsa-miR-298_st          0.167358948  3.670773  1.05356856 2.953946e-01
+hsa-miR-635_st         -0.191622444  2.759103 -1.03779607 3.026320e-01
+hsa-miR-541_st          0.176073204  2.655956  1.03155390 3.055292e-01
+hsa-miR-10b_st         -0.263155656  4.818538 -0.99047647 3.250617e-01
+hsa-miR-1321_st         0.180741266  3.157240  0.97452673 3.328645e-01
+hsa-miR-4291_st        -0.137497740  2.846167 -0.97231145 3.339579e-01
+hsa-miR-503_st         -0.253803258  4.161258 -0.95805152 3.410528e-01
+hsa-let-7f_st          -0.201471599  7.687976 -0.94135628 3.494835e-01
+hsa-miR-2116_st         0.188193902  2.431556  0.92927579 3.556672e-01
+hsa-miR-1323_st         0.174165819  4.666209  0.91668609 3.621860e-01
+hsa-miR-451_st         -0.190567405  3.586473 -0.87723982 3.831011e-01
+hsa-miR-193a-3p_st     -0.188610432  4.183508 -0.87065026 3.866672e-01
+hsa-miR-193b-star_st    0.130479158  5.637495  0.86778329 3.882252e-01
+hsa-miR-3173_st         0.192742737  4.082339  0.85274012 3.964636e-01
+hsa-miR-155_st         -0.199015515  8.063387 -0.84757213 3.993185e-01
+hsa-miR-383_st          0.130753295  2.382766  0.84254615 4.021070e-01
+hsa-miR-576-3p_st      -0.118984980  1.958706 -0.81992711 4.148033e-01
+hsa-miR-650_st          0.166257582  2.858514  0.80950686 4.207327e-01
+hsa-miR-187-star_st     0.131925363  3.613599  0.79111192 4.313229e-01
+hsa-miR-4310_st         0.121614134  3.336749  0.78814277 4.330470e-01
+hsa-miR-583_st         -0.139969154  2.383392 -0.78326251 4.358895e-01
+hsa-miR-934_st         -0.209853437  2.505538 -0.75749111 4.510811e-01
+hsa-miR-221_st         -0.186337526  8.002619 -0.74788127 4.568231e-01
+hsa-miR-629-star_st    -0.109104661  2.728364 -0.74178686 4.604863e-01
+hsa-miR-3164_st         0.188229935  3.548223  0.73257196 4.660567e-01
+hsa-miR-4251_st         0.110863202  2.340732  0.72516199 4.705636e-01
+hsa-miR-216a_st         0.104221555  2.116559  0.72437253 4.710452e-01
+hsa-miR-210_st         -0.188931666  7.360260 -0.72233404 4.722900e-01
+hsa-miR-524-5p_st       0.091588757  1.930458  0.70721097 4.815827e-01
+hsa-miR-3127_st         0.141367787  4.228911  0.70173293 4.849737e-01
+hsa-miR-21_st          -0.179845316  6.417825 -0.68272700 4.968403e-01
+hsa-miR-3125_st         0.126602941  2.585467  0.67867574 4.993900e-01
+hsa-miR-3176_st        -0.104542408  4.064089 -0.61668021 5.392754e-01
+hsa-miR-181a_st         0.100435138  8.741654  0.60965181 5.438978e-01
+hsa-miR-216b_st        -0.096504037  2.988871 -0.59596665 5.529556e-01
+hsa-miR-214_st          0.111282889  9.365002  0.59037809 5.566761e-01
+hsa-miR-375_st          0.368545821  6.072561  0.58670373 5.591289e-01
+hsa-miR-3151_st         0.113763243  4.661176  0.58185847 5.623716e-01
+hsa-miR-150_st         -0.199909355  7.075565 -0.57934078 5.640603e-01
+hsa-miR-202-star_st    -0.080165326  2.157988 -0.57889886 5.643569e-01
+hsa-miR-877-star_st     0.086219999  2.679869  0.56532884 5.735033e-01
+hsa-miR-4284_st         0.094727849  8.527902  0.56102636 5.764181e-01
+hsa-miR-1274a_st       -0.191069000  3.917252 -0.56043429 5.768198e-01
+hsa-miR-1244_st         0.115250363  2.792349  0.54989399 5.839929e-01
+hsa-miR-601_st          0.098766678  2.768967  0.54653320 5.862890e-01
+hsa-miR-1827_st        -0.124703162  2.837602 -0.53164833 5.965090e-01
+hsa-miR-3202_st         0.086773273  2.752950  0.46076536 6.462733e-01
+hsa-miR-3128_st         0.089471222  3.353459  0.42926877 6.689334e-01
+hsa-miR-3146_st        -0.088078696  2.554458 -0.42912525 6.690374e-01
+hsa-miR-138-1-star_st  -0.059588164  2.625781 -0.42358018 6.730598e-01
+hsa-miR-616_st          0.071569421  2.888943  0.42070815 6.751469e-01
+hsa-miR-890_st          0.093750633  3.359277  0.39719944 6.923257e-01
+hsa-miR-1258_st        -0.055416624  1.987479 -0.39467191 6.941825e-01
+hsa-miR-1262_st        -0.087344901  2.266069 -0.37438918 7.091499e-01
+hsa-miR-548u_st         0.059904860  2.552381  0.34710293 7.294664e-01
+hsa-miR-3190-3p_st      0.056018672  3.673020  0.34376945 7.319621e-01
+hsa-miR-3201_st         0.077173613  4.807499  0.33744754 7.367031e-01
+hsa-miR-628-3p_st      -0.057905081  3.585431 -0.32635140 7.450490e-01
+hsa-miR-570_st          0.060372762  3.038204  0.32017510 7.497079e-01
+hsa-miR-1249_st         0.063939827  3.737262  0.31230984 7.556542e-01
+hsa-miR-32_st           0.048375843  2.551934  0.30509115 7.611247e-01
+hsa-miR-4306_st         0.070004186  4.937160  0.26950085 7.882694e-01
+hsa-miR-550-star_st    -0.043852217  3.068072 -0.26795013 7.894584e-01
+hsa-miR-489_st          0.041497433  3.506772  0.26608460 7.908894e-01
+hsa-miR-4289_st         0.040444116  2.411895  0.26527383 7.915116e-01
+hsa-miR-9-star_st      -0.041468831  2.186390 -0.23677228 8.134659e-01
+hsa-miR-486-5p_st      -0.051947715  2.532105 -0.23381487 8.157529e-01
+hsa-miR-1255a_st        0.038338550  2.318133  0.21966325 8.267181e-01
+hsa-miR-20b-star_st    -0.031399505  2.366715 -0.21956464 8.267946e-01
+hsa-miR-183-star_st     0.039091763  3.999189  0.21317846 8.317545e-01
+hsa-miR-21-star_st      0.044310560  4.102473  0.21150075 8.330586e-01
+hsa-miR-4300_st        -0.030727385  2.276595 -0.21033470 8.339653e-01
+hsa-miR-181b_st         0.041339760  7.650582  0.20770423 8.360115e-01
+hsa-miR-335_st          0.043161362  3.495728  0.20358840 8.392154e-01
+hsa-miR-886-5p_st       0.049905524  5.840515  0.18975724 8.500016e-01
+hsa-miR-3136_st        -0.031029120  2.379328 -0.18281691 8.554250e-01
+hsa-miR-449b_st         0.052349252  2.319066  0.16625649 8.683934e-01
+hsa-miR-449c_st        -0.057758946  2.411109 -0.16085290 8.726330e-01
+hsa-miR-450b-5p_st     -0.023947387  2.423306 -0.15835167 8.745967e-01
+hsa-miR-4267_st        -0.021726092  2.490830 -0.14898371 8.819583e-01
+hsa-miR-331-5p_st      -0.025334766  3.019962 -0.14874873 8.821431e-01
+hsa-miR-199b-3p_st     -0.028378848  8.401737 -0.13795592 8.906375e-01
+hsa-miR-628-5p_st       0.023056109  3.731068  0.12046786 9.044282e-01
+hsa-miR-4294_st         0.017491476  3.294624  0.11402494 9.095165e-01
+hsa-miR-486-3p_st       0.016351937  2.965509  0.10671573 9.152937e-01
+hsa-miR-4261_st         0.015706153  3.877331  0.10296243 9.182620e-01
+hsa-miR-199a-3p_st      0.020135788  8.371934  0.09620893 9.236061e-01
+hsa-miR-222_st          0.016709815  8.087229  0.07245164 9.424315e-01
+hsa-miR-16-2-star_st    0.011269699  2.308035  0.06789335 9.460476e-01
+hsa-miR-337-5p_st       0.007722140  2.143677  0.05544763 9.559263e-01
+hsa-miR-155-star_st    -0.002355536  2.472034 -0.01549308 9.876791e-01
+hsa-miR-617_st         -0.002468573  2.816116 -0.01474730 9.882721e-01
+hsa-miR-1290_st        -0.002837208  2.729168 -0.01169322 9.907008e-01
+                          adj.P.Val           B
+hsa-miR-1202_st        0.0007495844  4.77717673
+hsa-miR-3197_st        0.0007786823  3.87232482
+hsa-miR-3185_st        0.0007786823  3.65239043
+hsa-miR-1225-5p_st     0.0007786823  3.32042115
+hsa-miR-939_st         0.0007786823  3.26193842
+hsa-miR-1909_st        0.0008394642  2.76871585
+hsa-miR-1224-5p_st     0.0008394642  2.73620497
+hsa-miR-1268_st        0.0008394642  2.66958958
+hsa-miR-660_st         0.0008394642  2.65391840
+hsa-miR-3180-3p_st     0.0009722896  2.30620532
+hsa-miR-150-star_st    0.0009722896  2.27350939
+hsa-miR-625_st         0.0009722896  2.18299139
+hsa-miR-92b-star_st    0.0009722896  2.10119757
+hsa-miR-3188_st        0.0009722896  2.09584451
+hsa-miR-1908_st        0.0009722896  2.05196385
+hsa-miR-663_st         0.0009892110  1.97720602
+hsa-miR-652_st         0.0010200349  1.89377837
+hsa-miR-92a_st         0.0015516544  1.45879097
+hsa-miR-423-3p_st      0.0016646425  1.34545444
+hsa-miR-572_st         0.0016740929  1.27143506
+hsa-miR-3141_st        0.0016740929  1.23325336
+hsa-miR-3162_st        0.0016740929  1.20677373
+hsa-miR-1275_st        0.0016818359  1.16210684
+hsa-miR-4281_st        0.0017929439  1.06516436
+hsa-miR-373-star_st    0.0018334934  1.00769145
+hsa-miR-1228-star_st   0.0021141650  0.84256721
+hsa-miR-200a-star_st   0.0021158818  0.80754510
+hsa-miR-671-5p_st      0.0029017591  0.48794389
+hsa-miR-762_st         0.0029150582  0.44531523
+hsa-miR-4322_st        0.0029150582  0.41101169
+hsa-miR-665_st         0.0029150582  0.37138411
+hsa-miR-149-star_st    0.0029150582  0.36281459
+hsa-miR-371-5p_st      0.0035243010  0.16320679
+hsa-miR-532-5p_st      0.0036723023  0.07674336
+hsa-miR-1469_st        0.0036723023  0.07282792
+hsa-miR-1207-5p_st     0.0040299313 -0.03656059
+hsa-miR-1281_st        0.0041462587 -0.08698142
+hsa-miR-149_st         0.0043176871 -0.18392765
+hsa-miR-3178_st        0.0043176871 -0.18954149
+hsa-miR-1307_st        0.0043176871 -0.19385722
+hsa-miR-663b_st        0.0048053473 -0.33677835
+hsa-miR-30c_st         0.0048053473 -0.34385685
+hsa-miR-940_st         0.0048053473 -0.35782670
+hsa-miR-345_st         0.0048053473 -0.37613831
+hsa-miR-125a-5p_st     0.0048409639 -0.40917414
+hsa-miR-28-3p_st       0.0048409639 -0.43743626
+hsa-miR-1308_st        0.0048409639 -0.45548756
+hsa-miR-4298_st        0.0048409639 -0.46108114
+hsa-miR-3187_st        0.0052363181 -0.56499527
+hsa-miR-1231_st        0.0052363181 -0.56835964
+hsa-miR-3195_st        0.0054819589 -0.62732969
+hsa-miR-20b_st         0.0061050002 -0.74137007
+hsa-miR-4327_st        0.0062139514 -0.77431648
+hsa-miR-330-3p_st      0.0062531567 -0.80899783
+hsa-miR-1471_st        0.0062531567 -0.82803177
+hsa-miR-17-star_st     0.0062531567 -0.82930959
+hsa-miR-574-3p_st      0.0065512362 -0.88688280
+hsa-miR-659_st         0.0068080052 -0.93687431
+hsa-miR-4299_st        0.0069326869 -0.97299029
+hsa-miR-339-5p_st      0.0069326869 -0.98344952
+hsa-miR-3154_st        0.0075257548 -1.07162129
+hsa-miR-18b_st         0.0080912599 -1.15086291
+hsa-miR-99b_st         0.0081922164 -1.19341285
+hsa-miR-15a_st         0.0081922164 -1.19892212
+hsa-miR-500-star_st    0.0081922164 -1.20410317
+hsa-miR-99b-star_st    0.0085803371 -1.25900476
+hsa-miR-498_st         0.0087703594 -1.29193499
+hsa-miR-339-3p_st      0.0089972126 -1.32788842
+hsa-miR-4257_st        0.0092283879 -1.36348310
+hsa-miR-622_st         0.0097210068 -1.42257370
+hsa-miR-106b-star_st   0.0100458396 -1.46442310
+hsa-miR-98_st          0.0103699371 -1.50507918
+hsa-miR-30a-star_st    0.0106343972 -1.54567493
+hsa-miR-885-3p_st      0.0106343972 -1.55178903
+hsa-miR-28-5p_st       0.0108479335 -1.58135749
+hsa-miR-1228_st        0.0117295955 -1.67633988
+hsa-miR-497_st         0.0117295955 -1.68720753
+hsa-miR-30d_st         0.0117295955 -1.69611174
+hsa-miR-602_st         0.0117295955 -1.69674161
+hsa-miR-224_st         0.0123050166 -1.75030321
+hsa-miR-612_st         0.0126002747 -1.78228738
+hsa-miR-637_st         0.0127899968 -1.80636590
+hsa-miR-1226-star_st   0.0128172605 -1.81897063
+hsa-miR-346_st         0.0131950595 -1.85563146
+hsa-miR-151-3p_st      0.0131950595 -1.87568567
+hsa-miR-532-3p_st      0.0131950595 -1.87603817
+hsa-miR-4286_st        0.0138135967 -1.92670919
+hsa-miR-4270_st        0.0140305392 -1.95864440
+hsa-miR-181a-2-star_st 0.0140305392 -1.96052168
+hsa-miR-17_st          0.0149036164 -2.02360897
+hsa-miR-1910_st        0.0151579300 -2.04825466
+hsa-miR-1246_st        0.0158647232 -2.09875519
+hsa-miR-30b_st         0.0158647232 -2.10752407
+hsa-miR-106a_st        0.0172016508 -2.18807532
+hsa-miR-629_st         0.0173137182 -2.20307755
+hsa-let-7b_st          0.0174631477 -2.21982220
+hsa-miR-2277_st        0.0177906556 -2.24618263
+hsa-miR-129-5p_st      0.0177906556 -2.25423409
+hsa-miR-362-5p_st      0.0181515020 -2.28075790
+hsa-miR-34a_st         0.0192841785 -2.34262703
+hsa-miR-30e_st         0.0204122451 -2.40110911
+hsa-miR-198_st         0.0216745855 -2.47592079
+hsa-miR-3137_st        0.0216745855 -2.47829576
+hsa-miR-26b_st         0.0216745855 -2.48004921
+hsa-miR-20a_st         0.0216745855 -2.49102197
+hsa-miR-1914-star_st   0.0216745855 -2.49579027
+hsa-miR-331-3p_st      0.0217910243 -2.50866530
+hsa-miR-1825_st        0.0219056722 -2.52136418
+hsa-miR-1180_st        0.0219119442 -2.52965624
+hsa-miR-509-3-5p_st    0.0224862410 -2.56018683
+hsa-miR-1909-star_st   0.0243202144 -2.63637070
+hsa-miR-513a-5p_st     0.0243320898 -2.64607432
+hsa-miR-3177_st        0.0243320898 -2.65233502
+hsa-miR-1271_st        0.0244512842 -2.66425032
+hsa-miR-557_st         0.0250034728 -2.69687268
+hsa-miR-3147_st        0.0250034728 -2.69878667
+hsa-miR-1260b_st       0.0250212082 -2.70752593
+hsa-miR-30e-star_st    0.0250212082 -2.71425585
+hsa-miR-1208_st        0.0267028346 -2.78349041
+hsa-miR-3175_st        0.0267028346 -2.78878364
+hsa-miR-3192_st        0.0267028346 -2.79249601
+hsa-miR-505-star_st    0.0267808021 -2.80576162
+hsa-miR-1913_st        0.0267808021 -2.80923387
+hsa-miR-128_st         0.0267967578 -2.81779852
+hsa-miR-3122_st        0.0267967578 -2.82372566
+hsa-miR-141_st         0.0269516523 -2.83561990
+hsa-miR-324-3p_st      0.0292116066 -2.91835468
+hsa-miR-132_st         0.0292116066 -2.91890125
+hsa-miR-4253_st        0.0293784740 -2.93187646
+hsa-miR-1238_st        0.0293784740 -2.93721601
+hsa-miR-564_st         0.0297223930 -2.95722636
+hsa-miR-1273d_st       0.0297223930 -2.96609462
+hsa-miR-3194_st        0.0297223930 -2.96695996
+hsa-miR-19b_st         0.0306616807 -3.00025746
+hsa-miR-1972_st        0.0317856216 -3.04211962
+hsa-miR-623_st         0.0317856216 -3.04403971
+hsa-miR-4321_st        0.0322420305 -3.06261844
+hsa-miR-148a_st        0.0349501377 -3.13819746
+hsa-miR-1973_st        0.0358252530 -3.16561878
+hsa-miR-3181_st        0.0375239325 -3.21147633
+hsa-miR-29c_st         0.0385811398 -3.24397826
+hsa-miR-200b-star_st   0.0385811398 -3.24740663
+hsa-let-7c_st          0.0389660333 -3.27264042
+hsa-miR-100_st         0.0389660333 -3.27366593
+hsa-miR-130a_st        0.0389660333 -3.27377637
+hsa-miR-296-3p_st      0.0391996740 -3.28476008
+hsa-miR-195_st         0.0429820381 -3.36918556
+hsa-miR-1263_st        0.0441490272 -3.39777262
+hsa-miR-1254_st        0.0445577163 -3.41134418
+hsa-miR-143-star_st    0.0448320331 -3.42225422
+hsa-miR-135a-star_st   0.0448838756 -3.42888685
+hsa-miR-370_st         0.0450022612 -3.43767935
+hsa-miR-92b_st         0.0450022612 -3.44231015
+hsa-miR-1182_st        0.0453668301 -3.45469982
+hsa-miR-1183_st        0.0459678579 -3.47137128
+hsa-miR-379_st         0.0463139340 -3.48319436
+hsa-miR-421_st         0.0494008601 -3.54431416
+hsa-miR-943_st         0.0494008601 -3.54866809
+hsa-miR-200a_st        0.0509000819 -3.57929093
+hsa-miR-760_st         0.0522036929 -3.60595192
+hsa-miR-31_st          0.0528787409 -3.62205573
+hsa-miR-148b_st        0.0578478118 -3.70292583
+hsa-miR-483-5p_st      0.0584068115 -3.71618312
+hsa-miR-491-5p_st      0.0589723981 -3.72941788
+hsa-miR-10a_st         0.0590889860 -3.73618133
+hsa-miR-30a_st         0.0599932648 -3.75833113
+hsa-miR-3172_st        0.0599932648 -3.75903765
+hsa-miR-363_st         0.0603379401 -3.77006069
+hsa-miR-192_st         0.0603379401 -3.77738403
+hsa-miR-23b_st         0.0603379401 -3.77876749
+hsa-let-7g_st          0.0616185035 -3.80126941
+hsa-miR-183_st         0.0640386078 -3.83836668
+hsa-miR-18a_st         0.0658221029 -3.86790414
+hsa-miR-27b_st         0.0658221029 -3.87095575
+hsa-miR-378c_st        0.0658588300 -3.87620155
+hsa-miR-630_st         0.0665576666 -3.89284530
+hsa-miR-500_st         0.0665576666 -3.89451671
+hsa-miR-22_st          0.0665576666 -3.89916965
+hsa-miR-885-5p_st      0.0679039021 -3.92492167
+hsa-miR-29b-2-star_st  0.0679039021 -3.92514428
+hsa-miR-4287_st        0.0680579328 -3.93163790
+hsa-miR-452_st         0.0686144690 -3.94299095
+hsa-miR-425_st         0.0691216158 -3.95366414
+hsa-miR-127-3p_st      0.0696523702 -3.96454332
+hsa-miR-542-5p_st      0.0718930034 -4.00154230
+hsa-let-7b-star_st     0.0718930034 -4.00174294
+hsa-miR-615-3p_st      0.0718930034 -4.00421889
+hsa-miR-106b_st        0.0745372056 -4.03996544
+hsa-miR-4271_st        0.0745372056 -4.04291803
+hsa-miR-1292_st        0.0769839763 -4.07395690
+hsa-miR-378_st         0.0809827824 -4.12001964
+hsa-miR-487b_st        0.0849294422 -4.16342569
+v11_hsa-miR-1300_st    0.0871637208 -4.18898626
+hsa-miR-15b_st         0.0882587719 -4.20344765
+hsa-miR-4290_st        0.0910847567 -4.23343600
+hsa-miR-1237_st        0.0952379054 -4.27400052
+hsa-miR-3191_st        0.1034929756 -4.34572012
+hsa-miR-3152_st        0.1049110034 -4.36085389
+hsa-miR-769-5p_st      0.1062148377 -4.37493291
+hsa-miR-187_st         0.1099024416 -4.40656984
+hsa-miR-3189_st        0.1103460818 -4.42037081
+hsa-miR-1260_st        0.1103460818 -4.42086939
+hsa-miR-1296_st        0.1103460818 -4.42183274
+hsa-miR-4314_st        0.1128768193 -4.44599182
+hsa-miR-320e_st        0.1128768193 -4.44799604
+hsa-miR-675_st         0.1204761305 -4.50421455
+hsa-miR-152_st         0.1256447067 -4.54168303
+hsa-miR-365-star_st    0.1273219327 -4.55611062
+hsa-miR-224-star_st    0.1274413751 -4.56068236
+hsa-miR-181d_st        0.1298559974 -4.57943439
+hsa-miR-510_st         0.1331433051 -4.60308562
+hsa-miR-191-star_st    0.1361241437 -4.62440233
+hsa-miR-181c_st        0.1373572086 -4.63527341
+hsa-miR-608_st         0.1396680515 -4.65217734
+hsa-miR-1274b_st       0.1413055976 -4.66506833
+hsa-miR-1301_st        0.1454776586 -4.69166852
+hsa-miR-424-star_st    0.1458989152 -4.69758039
+hsa-miR-378-star_st    0.1476697623 -4.71243716
+hsa-miR-432_st         0.1476697623 -4.71427938
+hsa-miR-30c-2-star_st  0.1478611411 -4.72021280
+hsa-miR-193b_st        0.1478611411 -4.72243503
+hsa-miR-29a_st         0.1503893848 -4.73934223
+hsa-miR-145_st         0.1503893848 -4.74279222
+hsa-miR-3153_st        0.1520507792 -4.75489395
+hsa-miR-382_st         0.1529183203 -4.76282517
+hsa-miR-30b-star_st    0.1574025734 -4.78884269
+hsa-miR-1272_st        0.1641825082 -4.82507367
+hsa-miR-615-5p_st      0.1672674189 -4.84291335
+hsa-miR-720_st         0.1695813238 -4.85693098
+hsa-miR-3190-5p_st     0.1727760943 -4.87471067
+hsa-miR-214-star_st    0.1736171707 -4.88180097
+hsa-miR-197_st         0.1781961875 -4.90779407
+hsa-miR-125b_st        0.1781961875 -4.90846669
+hsa-miR-24-2-star_st   0.1782009812 -4.91177658
+hsa-miR-194_st         0.1904583313 -4.96593664
+hsa-miR-3138_st        0.1904901581 -4.96930033
+hsa-miR-513c_st        0.1920757976 -4.97883234
+hsa-miR-886-3p_st      0.1946667295 -4.99221985
+hsa-miR-205_st         0.1956557386 -4.99924989
+hsa-miR-483-3p_st      0.1985479309 -5.01353702
+hsa-miR-3121_st        0.2070936015 -5.04850177
+hsa-miR-1270_st        0.2177600231 -5.08931790
+hsa-miR-3131_st        0.2255613269 -5.11867365
+hsa-miR-574-5p_st      0.2273816923 -5.12771107
+hsa-miR-422a_st        0.2281502450 -5.13325861
+hsa-miR-29c-star_st    0.2291165985 -5.13942098
+hsa-miR-718_st         0.2313848326 -5.14973219
+hsa-miR-1538_st        0.2368278482 -5.17242849
+hsa-miR-143_st         0.2368278482 -5.17287998
+hsa-miR-3163_st        0.2397994445 -5.18502047
+hsa-miR-146a_st        0.2405633706 -5.19029667
+hsa-miR-409-3p_st      0.2636336990 -5.26007253
+hsa-miR-513b_st        0.2666658866 -5.27122301
+hsa-miR-206_st         0.2745941144 -5.29520703
+hsa-miR-99a_st         0.2749657130 -5.29900602
+hsa-miR-4274_st        0.2768620929 -5.30675488
+hsa-miR-125b-1-star_st 0.2787298732 -5.31666652
+hsa-miR-342-5p_st      0.2787298732 -5.31715357
+hsa-miR-3116_st        0.2846667469 -5.33497692
+hsa-miR-202_st         0.2860550615 -5.34118887
+hsa-miR-181a-star_st   0.2902668262 -5.35430705
+hsa-miR-200b_st        0.2905988841 -5.35876659
+hsa-miR-1255b_st       0.2905988841 -5.36053103
+hsa-miR-3144-5p_st     0.2949714113 -5.37378030
+hsa-miR-188-5p_st      0.2949765727 -5.37646171
+hsa-miR-3132_st        0.2987827884 -5.38815009
+hsa-miR-1291_st        0.3068660424 -5.40951098
+hsa-miR-184_st         0.3093958487 -5.41786011
+hsa-miR-548x_st        0.3198040530 -5.44345975
+hsa-miR-182_st         0.3224136500 -5.45195741
+hsa-miR-199a-5p_st     0.3224136500 -5.45420606
+hsa-miR-342-3p_st      0.3248555776 -5.46195237
+hsa-miR-146b-5p_st     0.3273486867 -5.46998195
+hsa-miR-125b-2-star_st 0.3273486867 -5.47225234
+hsa-miR-708_st         0.3368411228 -5.49431306
+hsa-miR-203_st         0.3434145336 -5.50993174
+hsa-miR-449b-star_st   0.3515513808 -5.52821999
+hsa-miR-221-star_st    0.3533004373 -5.53399101
+hsa-miR-548q_st        0.3708191219 -5.56976945
+hsa-miR-2276_st        0.3708191219 -5.57113248
+hsa-miR-765_st         0.3809241622 -5.59126646
+hsa-miR-34c-3p_st      0.3840204533 -5.59892520
+hsa-miR-196a_st        0.3871528504 -5.60657005
+hsa-miR-298_st         0.3910857656 -5.61547573
+hsa-miR-635_st         0.3992618280 -5.63120179
+hsa-miR-541_st         0.4016747689 -5.63736198
+hsa-miR-10b_st         0.4258648125 -5.67699853
+hsa-miR-1321_st        0.4344919685 -5.69196628
+hsa-miR-4291_st        0.4344919685 -5.69402645
+hsa-miR-503_st         0.4421925885 -5.70717852
+hsa-let-7f_st          0.4515662642 -5.72233582
+hsa-miR-2116_st        0.4579824412 -5.73314127
+hsa-miR-1323_st        0.4647848119 -5.74425712
+hsa-miR-451_st         0.4899524879 -5.77812522
+hsa-miR-193a-3p_st     0.4928368766 -5.78364081
+hsa-miR-193b-star_st   0.4931509019 -5.78602780
+hsa-miR-3173_st        0.5019202248 -5.79842607
+hsa-miR-155_st         0.5038380952 -5.80263636
+hsa-miR-383_st         0.5056596639 -5.80670690
+hsa-miR-576-3p_st      0.5198867995 -5.82473200
+hsa-miR-650_st         0.5255664366 -5.83287387
+hsa-miR-187-star_st    0.5370113456 -5.84699703
+hsa-miR-4310_st        0.5373784307 -5.84924676
+hsa-miR-583_st         0.5391265135 -5.85292647
+hsa-miR-934_st         0.5560868519 -5.87198515
+hsa-miR-221_st         0.5613251698 -5.87893125
+hsa-miR-629-star_st    0.5639831783 -5.88329111
+hsa-miR-3164_st        0.5689523056 -5.88981656
+hsa-miR-4251_st        0.5710001404 -5.89500556
+hsa-miR-216a_st        0.5710001404 -5.89555533
+hsa-miR-210_st         0.5710001404 -5.89697218
+hsa-miR-524-5p_st      0.5803689517 -5.90736053
+hsa-miR-3127_st        0.5825882487 -5.91107001
+hsa-miR-21_st          0.5949424728 -5.92371926
+hsa-miR-3125_st        0.5960972171 -5.92637121
+hsa-miR-3176_st        0.6416694254 -5.96500713
+hsa-miR-181a_st        0.6451280160 -5.96915637
+hsa-miR-216b_st        0.6538091230 -5.97710035
+hsa-miR-214_st         0.6561448124 -5.98029304
+hsa-miR-375_st         0.6569603528 -5.98237594
+hsa-miR-3151_st        0.6569603528 -5.98510288
+hsa-miR-150_st         0.6569603528 -5.98651101
+hsa-miR-202-star_st    0.6569603528 -5.98675755
+hsa-miR-877-star_st    0.6652890785 -5.99423725
+hsa-miR-4284_st        0.6652890785 -5.99657202
+hsa-miR-1274a_st       0.6652890785 -5.99689193
+hsa-miR-1244_st        0.6715025674 -6.00253101
+hsa-miR-601_st         0.6720873459 -6.00430671
+hsa-miR-1827_st        0.6817245963 -6.01204143
+hsa-miR-3202_st        0.7363598655 -6.04596467
+hsa-miR-3128_st        0.7577049532 -6.05949236
+hsa-miR-3146_st        0.7577049532 -6.05955182
+hsa-miR-138-1-star_st  0.7599713973 -6.06183404
+hsa-miR-616_st         0.7600456411 -6.06300449
+hsa-miR-890_st         0.7768232582 -6.07228708
+hsa-miR-1258_st        0.7768232582 -6.07325346
+hsa-miR-1262_st        0.7912176483 -6.08078595
+hsa-miR-548u_st        0.8114774326 -6.09029486
+hsa-miR-3190-3p_st     0.8118517670 -6.09140740
+hsa-miR-3201_st        0.8147069337 -6.09348793
+hsa-miR-628-3p_st      0.8215203416 -6.09704656
+hsa-miR-570_st         0.8242402332 -6.09897597
+hsa-miR-1249_st        0.8283556034 -6.10137976
+hsa-miR-32_st          0.8319270048 -6.10353348
+hsa-miR-4306_st        0.8551963904 -6.11341736
+hsa-miR-550-star_st    0.8551963904 -6.11382024
+hsa-miR-489_st         0.8551963904 -6.11430183
+hsa-miR-4289_st        0.8551963904 -6.11451008
+hsa-miR-9-star_st      0.8763516381 -6.12142783
+hsa-miR-486-5p_st      0.8763516381 -6.12210073
+hsa-miR-1255a_st       0.8829784159 -6.12520375
+hsa-miR-20b-star_st    0.8829784159 -6.12522470
+hsa-miR-183-star_st    0.8829784159 -6.12656105
+hsa-miR-21-star_st     0.8829784159 -6.12690559
+hsa-miR-4300_st        0.8829784159 -6.12714345
+hsa-miR-181b_st        0.8829784159 -6.12767521
+hsa-miR-335_st         0.8838795023 -6.12849384
+hsa-miR-886-5p_st      0.8927391302 -6.13112490
+hsa-miR-3136_st        0.8959325731 -6.13237549
+hsa-miR-449b_st        0.9069887037 -6.13517147
+hsa-miR-449c_st        0.9084208573 -6.13602643
+hsa-miR-450b-5p_st     0.9084208573 -6.13641261
+hsa-miR-4267_st        0.9112246962 -6.13780527
+hsa-miR-331-5p_st      0.9112246962 -6.13783911
+hsa-miR-199b-3p_st     0.9174786121 -6.13933595
+hsa-miR-628-5p_st      0.9291393106 -6.14152221
+hsa-miR-4294_st        0.9318207696 -6.14225311
+hsa-miR-486-3p_st      0.9351913592 -6.14303367
+hsa-miR-4261_st        0.9356816409 -6.14341441
+hsa-miR-199a-3p_st     0.9385834562 -6.14406518
+hsa-miR-222_st         0.9551326868 -6.14600381
+hsa-miR-16-2-star_st   0.9562201053 -6.14631333
+hsa-miR-337-5p_st      0.9636147234 -6.14705607
+hsa-miR-155-star_st    0.9907007950 -6.14842751
+hsa-miR-617_st         0.9907007950 -6.14843843
+hsa-miR-1290_st        0.9907007950 -6.14847750
+\end{Soutput}
+\end{Schunk}
+
+Para interpretar la información de la lista debemos tener en cuenta que el valor de logFC representa la diferencia de expresión, y cuanto más alto mayor será ésta. Por ejemplo, el primer gen de la lista (hsa-miR-1202-st) se expresa de manera diferencial en los pacientes de grupo A frente a los pacientes de grupo B y C, y, al ser positivo su valor de logFC, indica que se sobreexpresa en B y C (es decir, en pacientes que recidivan).
+
+
+El diagrama de Venn muestra los genes en común para los diferentes contrastes de diseño experimental:
+
+\begin{Schunk}
+\begin{Sinput}
+> p<-as.matrix(fit1.main$p.value[,1:3])
+> s<-sign(as.matrix(fit1.main$coefficients[,1:3]))
+> res1<-new("TestResults", s*(p<p.value.cutoff))
+> probeNames<-rownames(res1)
+> sum.res1.rows<-apply(abs(res1),1,sum)
+> res1.selected<-res1[sum.res1.rows!=0,]
+> probeNames.selected<-probeNames[sum.res1.rows!=0]
+> vennDiagram(res1.selected[,1:3], main="miRNA in common", cex=0.9)
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Informe-032}
+
+
+\subsection{Class discovery (Clustering)}
+
+El clustering agrupa e identifica genes expresados de forma similar y después trata de correlacionar resultados con la biología. La idea inicial es que los genes funcionalmente relacionados y co-regulados probablemente se expresarán simultáneamente, por lo que pueden ser agrupados en un cluster.
+Esto puede aplicarse para identificar grupos de genes co-regulados, identificar patrones de expresión temporal y reducir redundancia en modelos predictivos.
+Los algoritmos utilizados para clustering son: jerárquico, SOM, K-means, HOPA (específico para datos de microarrays) y PCA.
+El 'heatmap' es una matriz rectangular de bloques con colores representando el nivel de expresión de cada gen en cada array.
+
+\begin{Schunk}
+\begin{Sinput}
+> my.colorFct <- function(n=50,low.col=0.45,high.col=1,saturation=1) {
++   if(n<2)stop("n must be greater than 2")
++   n1<-n%/%2
++   n2<-n-n1
++   c(hsv(low.col,saturation,seq(1,0,length=n1)),hsv(high.col,saturation,seq(0,1,length=n2)))
++ }
+> exprs2cluster<-exprs(my.eset)[probeNames.selected,]
+> colnames(exprs2cluster)<-pData(my.eset)$ID
+> misdatoss<-t(scale(t(exprs2cluster)))
+> hr<-hclust(as.dist(1-cor(t(misdatoss),method="pearson")),method="complete")
+> hc<-hclust(as.dist(1-cor(misdatoss,method="spearman")),method="complete")
+> mycl<-cutree(hr,h=max(hr$height)/1.5,k=5)
+> mycolhc<-sample(rainbow(256))
+> mycolhc<-mycolhc[as.vector(mycl)]
+> heatmap(exprs2cluster,Rowv=as.dendrogram(hr),Colv=as.dendrogram(hc),col=my.colorFct(low.col=0.6,high.col=1,saturation=1),scale="row",RowSideColors=mycolhc,verbose=TRUE)
+\end{Sinput}
+\begin{Soutput}
+layout: widths =  1 0.2 4 , heights =  1 4 ; lmat=
+     [,1] [,2] [,3]
+[1,]    0    0    4
+[2,]    3    1    2
+\end{Soutput}
+\begin{Sinput}
+> 
+\end{Sinput}
+\end{Schunk}
+\includegraphics{Informe-033}
+
+\end{document}

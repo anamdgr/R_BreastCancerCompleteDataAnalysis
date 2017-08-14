@@ -1,0 +1,522 @@
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.3.25)  20 SEP 2014 21:55
+entering extended mode
+**Informe.tex
+(C:\Users\usuario\Desktop\Curso13-14\02Semestre\DataMining\Informe.tex
+LaTeX2e <2011/06/27>
+Babel <v3.8m> and hyphenation patterns for english, afrikaans, ancientgreek, ar
+abic, armenian, assamese, basque, bengali, bokmal, bulgarian, catalan, coptic, 
+croatian, czech, danish, dutch, esperanto, estonian, farsi, finnish, french, ga
+lician, german, german-x-2013-05-26, greek, gujarati, hindi, hungarian, iceland
+ic, indonesian, interlingua, irish, italian, kannada, kurmanji, latin, latvian,
+ lithuanian, malayalam, marathi, mongolian, mongolianlmc, monogreek, ngerman, n
+german-x-2013-05-26, nynorsk, oriya, panjabi, pinyin, polish, portuguese, roman
+ian, russian, sanskrit, serbian, slovak, slovenian, spanish, swedish, swissgerm
+an, tamil, telugu, turkish, turkmen, ukenglish, ukrainian, uppersorbian, usengl
+ishmax, welsh, loaded.
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\report.cls"
+Document Class: report 2007/10/19 v1.4h Standard LaTeX document class
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\size10.clo"
+File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@chapter=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\geometry\geometry.sty"
+Package: geometry 2010/09/12 v5.6 Page Geometry
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\keyval.sty"
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks14
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\ifpdf.sty"
+Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in PDF mode is detected.
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\ifvtex.sty"
+Package: ifvtex 2010/03/01 v1.5 Detect VTeX and its facilities (HO)
+Package ifvtex Info: VTeX not detected.
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\ifxetex\ifxetex.sty"
+Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
+)
+\Gm@cnth=\count88
+\Gm@cntv=\count89
+\c@Gm@tempcnt=\count90
+\Gm@bindingoffset=\dimen103
+\Gm@wd@mp=\dimen104
+\Gm@odd@mp=\dimen105
+\Gm@even@mp=\dimen106
+\Gm@layoutwidth=\dimen107
+\Gm@layoutheight=\dimen108
+\Gm@layouthoffset=\dimen109
+\Gm@layoutvoffset=\dimen110
+\Gm@dimlist=\toks15
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\geometry\geometry.cfg"))
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\babel\babel.sty"
+Package: babel 2008/07/08 v3.8m The Babel package
+
+*************************************
+* Local config file bblopts.cfg used
+*
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\00miktex\bblopts.cfg"
+File: bblopts.cfg 2006/07/31 v1.0 MiKTeX 'babel' configuration
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\babel\spanish.ldf"
+Language: spanish.ldf 2009/01/02 v5.0h Spanish support from the babel system
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\babel\babel.def"
+File: babel.def 2008/07/08 v3.8m Babel common definitions
+\babel@savecnt=\count91
+\U@D=\dimen111
+)
+\es@datefmt=\count92
+\es@quottoks=\toks16
+\es@quotdepth=\count93
+Package babel Info: Making " an active character on input line 492.
+Package babel Info: Making . an active character on input line 585.
+Package babel Info: Making < an active character on input line 630.
+Package babel Info: Making > an active character on input line 630.
+))
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\tools\indentfirst.sty"
+Package: indentfirst 1995/11/23 v1.03 Indent first paragraph (DPC)
+)
+(C:/PROGRA~1/R/R-31~1.1/share/texmf/tex/latex\Sweave.sty
+Package: Sweave 
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\ifthen.sty"
+Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphicx.sty"
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphics.sty"
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\trig.sty"
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\00miktex\graphics.cfg"
+File: graphics.cfg 2007/01/18 v1.5 graphics configuration of teTeX/TeXLive
+)
+Package graphics Info: Driver file: pdftex.def on input line 91.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\pdftex-def\pdftex.def"
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\infwarerr.sty"
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\ltxcmds.sty"
+Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
+)
+\Gread@gobject=\count94
+))
+\Gin@req@height=\dimen112
+\Gin@req@width=\dimen113
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\fancyvrb\fancyvrb.sty"
+Package: fancyvrb 2008/02/07
+
+Style option: `fancyvrb' v2.7a, with DG/SPQR fixes, and firstline=lastline fix 
+<2008/02/07> (tvz)
+\FV@CodeLineNo=\count95
+\FV@InFile=\read1
+\FV@TabBox=\box26
+\c@FancyVerbLine=\count96
+\FV@StepNumber=\count97
+\FV@OutFile=\write3
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\textcomp.sty"
+Package: textcomp 2005/09/27 v1.99g Standard LaTeX package
+Package textcomp Info: Sub-encoding information:
+(textcomp)               5 = only ISO-Adobe without \textcurrency
+(textcomp)               4 = 5 + \texteuro
+(textcomp)               3 = 4 + \textohm
+(textcomp)               2 = 3 + \textestimated + \textcurrency
+(textcomp)               1 = TS1 - \textcircled - \t
+(textcomp)               0 = TS1 (full)
+(textcomp)             Font families with sub-encoding setting implement
+(textcomp)             only a restricted character set as indicated.
+(textcomp)             Family '?' is the default used for unknown fonts.
+(textcomp)             See the documentation for details.
+Package textcomp Info: Setting ? sub-encoding to TS1/1 on input line 71.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\ts1enc.def"
+File: ts1enc.def 2001/06/05 v3.0e (jk/car/fm) Standard LaTeX file
+)
+LaTeX Info: Redefining \oldstylenums on input line 266.
+Package textcomp Info: Setting cmr sub-encoding to TS1/0 on input line 281.
+Package textcomp Info: Setting cmss sub-encoding to TS1/0 on input line 282.
+Package textcomp Info: Setting cmtt sub-encoding to TS1/0 on input line 283.
+Package textcomp Info: Setting cmvtt sub-encoding to TS1/0 on input line 284.
+Package textcomp Info: Setting cmbr sub-encoding to TS1/0 on input line 285.
+Package textcomp Info: Setting cmtl sub-encoding to TS1/0 on input line 286.
+Package textcomp Info: Setting ccr sub-encoding to TS1/0 on input line 287.
+Package textcomp Info: Setting ptm sub-encoding to TS1/4 on input line 288.
+Package textcomp Info: Setting pcr sub-encoding to TS1/4 on input line 289.
+Package textcomp Info: Setting phv sub-encoding to TS1/4 on input line 290.
+Package textcomp Info: Setting ppl sub-encoding to TS1/3 on input line 291.
+Package textcomp Info: Setting pag sub-encoding to TS1/4 on input line 292.
+Package textcomp Info: Setting pbk sub-encoding to TS1/4 on input line 293.
+Package textcomp Info: Setting pnc sub-encoding to TS1/4 on input line 294.
+Package textcomp Info: Setting pzc sub-encoding to TS1/4 on input line 295.
+Package textcomp Info: Setting bch sub-encoding to TS1/4 on input line 296.
+Package textcomp Info: Setting put sub-encoding to TS1/5 on input line 297.
+Package textcomp Info: Setting uag sub-encoding to TS1/5 on input line 298.
+Package textcomp Info: Setting ugq sub-encoding to TS1/5 on input line 299.
+Package textcomp Info: Setting ul8 sub-encoding to TS1/4 on input line 300.
+Package textcomp Info: Setting ul9 sub-encoding to TS1/4 on input line 301.
+Package textcomp Info: Setting augie sub-encoding to TS1/5 on input line 302.
+Package textcomp Info: Setting dayrom sub-encoding to TS1/3 on input line 303.
+Package textcomp Info: Setting dayroms sub-encoding to TS1/3 on input line 304.
+
+Package textcomp Info: Setting pxr sub-encoding to TS1/0 on input line 305.
+Package textcomp Info: Setting pxss sub-encoding to TS1/0 on input line 306.
+Package textcomp Info: Setting pxtt sub-encoding to TS1/0 on input line 307.
+Package textcomp Info: Setting txr sub-encoding to TS1/0 on input line 308.
+Package textcomp Info: Setting txss sub-encoding to TS1/0 on input line 309.
+Package textcomp Info: Setting txtt sub-encoding to TS1/0 on input line 310.
+Package textcomp Info: Setting lmr sub-encoding to TS1/0 on input line 311.
+Package textcomp Info: Setting lmdh sub-encoding to TS1/0 on input line 312.
+Package textcomp Info: Setting lmss sub-encoding to TS1/0 on input line 313.
+Package textcomp Info: Setting lmssq sub-encoding to TS1/0 on input line 314.
+Package textcomp Info: Setting lmvtt sub-encoding to TS1/0 on input line 315.
+Package textcomp Info: Setting qhv sub-encoding to TS1/0 on input line 316.
+Package textcomp Info: Setting qag sub-encoding to TS1/0 on input line 317.
+Package textcomp Info: Setting qbk sub-encoding to TS1/0 on input line 318.
+Package textcomp Info: Setting qcr sub-encoding to TS1/0 on input line 319.
+Package textcomp Info: Setting qcs sub-encoding to TS1/0 on input line 320.
+Package textcomp Info: Setting qpl sub-encoding to TS1/0 on input line 321.
+Package textcomp Info: Setting qtm sub-encoding to TS1/0 on input line 322.
+Package textcomp Info: Setting qzc sub-encoding to TS1/0 on input line 323.
+Package textcomp Info: Setting qhvc sub-encoding to TS1/0 on input line 324.
+Package textcomp Info: Setting futs sub-encoding to TS1/4 on input line 325.
+Package textcomp Info: Setting futx sub-encoding to TS1/4 on input line 326.
+Package textcomp Info: Setting futj sub-encoding to TS1/4 on input line 327.
+Package textcomp Info: Setting hlh sub-encoding to TS1/3 on input line 328.
+Package textcomp Info: Setting hls sub-encoding to TS1/3 on input line 329.
+Package textcomp Info: Setting hlst sub-encoding to TS1/3 on input line 330.
+Package textcomp Info: Setting hlct sub-encoding to TS1/5 on input line 331.
+Package textcomp Info: Setting hlx sub-encoding to TS1/5 on input line 332.
+Package textcomp Info: Setting hlce sub-encoding to TS1/5 on input line 333.
+Package textcomp Info: Setting hlcn sub-encoding to TS1/5 on input line 334.
+Package textcomp Info: Setting hlcw sub-encoding to TS1/5 on input line 335.
+Package textcomp Info: Setting hlcf sub-encoding to TS1/5 on input line 336.
+Package textcomp Info: Setting pplx sub-encoding to TS1/3 on input line 337.
+Package textcomp Info: Setting pplj sub-encoding to TS1/3 on input line 338.
+Package textcomp Info: Setting ptmx sub-encoding to TS1/4 on input line 339.
+Package textcomp Info: Setting ptmj sub-encoding to TS1/4 on input line 340.
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\fontenc.sty"
+Package: fontenc 2005/09/27 v1.99g Standard LaTeX package
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\t1enc.def"
+File: t1enc.def 2005/09/27 v1.99g Standard LaTeX file
+LaTeX Font Info:    Redeclaring font encoding T1 on input line 43.
+))
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\ae\ae.sty"
+Package: ae 2001/02/12 1.3 Almost European Computer Modern
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\fontenc.sty"
+Package: fontenc 2005/09/27 v1.99g Standard LaTeX package
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\t1enc.def"
+File: t1enc.def 2005/09/27 v1.99g Standard LaTeX file
+LaTeX Font Info:    Redeclaring font encoding T1 on input line 43.
+)
+LaTeX Font Info:    Try loading font information for T1+aer on input line 100.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\ae\t1aer.fd"
+File: t1aer.fd 1997/11/16 Font definitions for T1/aer.
+))))
+(C:\Users\usuario\Desktop\Curso13-14\02Semestre\DataMining\Informe.aux)
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 14.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 14.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\ts1cmr.fd"
+File: ts1cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    ... okay on input line 14.
+
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: <default>
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(57.81621pt, 498.66258pt, 57.81621pt)
+* v-part:(T,H,B)=(57.81621pt, 679.33757pt, 57.81621pt)
+* \paperwidth=614.295pt
+* \paperheight=794.96999pt
+* \textwidth=498.66258pt
+* \textheight=679.33757pt
+* \oddsidemargin=-14.45378pt
+* \evensidemargin=-14.45378pt
+* \topmargin=-51.45378pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=10.0pt
+* \footskip=30.0pt
+* \marginparwidth=65.0pt
+* \marginparsep=11.0pt
+* \columnsep=10.0pt
+* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count98
+\scratchdimen=\dimen114
+\scratchbox=\box27
+\nofMPsegments=\count99
+\nofMParguments=\count100
+\everyMPshowfont=\toks17
+\MPscratchCnt=\count101
+\MPscratchDim=\dimen115
+\MPnumerator=\count102
+\makeMPintoPDFobject=\count103
+\everyMPtoPDFconversion=\toks18
+)
+(C:\Users\usuario\Desktop\Curso13-14\02Semestre\DataMining\Informe-concordance.
+tex)
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 18.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 18.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 18.
+ [1
+
+{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}]
+Cap\'{\i }tulo 1.
+[1
+
+]
+Cap\'{\i }tulo 2.
+LaTeX Font Info:    Try loading font information for T1+aett on input line 49.
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\ae\t1aett.fd"
+File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
+) [2
+
+]
+LaTeX Font Info:    Try loading font information for TS1+aer on input line 100.
+
+
+(C:/PROGRA~1/R/R-31~1.1/share/texmf/tex/latex\ts1aer.fd
+File: ts1aer.fd 
+)
+LaTeX Font Info:    Font shape `TS1/aer/m/n' in size <10> not available
+(Font)              Font shape `TS1/cmr/m/n' tried instead on input line 100.
+ [3]
+LaTeX Font Info:    Try loading font information for TS1+aett on input line 157
+.
+
+(C:/PROGRA~1/R/R-31~1.1/share/texmf/tex/latex\ts1aett.fd
+File: ts1aett.fd 
+)
+LaTeX Font Info:    Try loading font information for TS1+cmtt on input line 157
+.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\ts1cmtt.fd"
+File: ts1cmtt.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `TS1/aett/m/n' in size <10> not available
+(Font)              Font shape `TS1/cmtt/m/n' tried instead on input line 157.
+ [4] [5]
+[6]
+Cap\'{\i }tulo 3.
+[7
+
+] [8] <Informe-009.pdf, id=39, 433.62pt x 433.62pt>
+File: Informe-009.pdf Graphic file (type pdf)
+ <use Informe-009.pdf>
+Package pdftex.def Info: Informe-009.pdf used on input line 362.
+(pdftex.def)             Requested size: 398.93158pt x 398.94847pt.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 365.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 365.
+
+[9 <C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining/Informe-009.pdf>]
+<Informe-011.pdf, id=49, 433.62pt x 433.62pt>
+File: Informe-011.pdf Graphic file (type pdf)
+ <use Informe-011.pdf>
+Package pdftex.def Info: Informe-011.pdf used on input line 418.
+(pdftex.def)             Requested size: 398.93158pt x 398.94847pt.
+ [10]
+[11 <C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining/Informe-011.pdf>
+] <Informe-012.pdf, id=62, 433.62pt x 433.62pt>
+File: Informe-012.pdf Graphic file (type pdf)
+ <use Informe-012.pdf>
+Package pdftex.def Info: Informe-012.pdf used on input line 441.
+(pdftex.def)             Requested size: 398.93158pt x 398.94847pt.
+ [12 <C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining/Informe-012.pdf
+>]
+<Informe-013.pdf, id=73, 433.62pt x 433.62pt>
+File: Informe-013.pdf Graphic file (type pdf)
+ <use Informe-013.pdf>
+Package pdftex.def Info: Informe-013.pdf used on input line 468.
+(pdftex.def)             Requested size: 398.93158pt x 398.94847pt.
+ [13 <C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining/Informe-013.pdf
+>] [14]
+[15] <Informe-017.pdf, id=90, 433.62pt x 433.62pt>
+File: Informe-017.pdf Graphic file (type pdf)
+ <use Informe-017.pdf>
+Package pdftex.def Info: Informe-017.pdf used on input line 631.
+(pdftex.def)             Requested size: 398.93158pt x 398.94847pt.
+
+[16] [17 <C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining/Informe-017
+.pdf>] <Informe-018.pdf, id=103, 433.62pt x 433.62pt>
+File: Informe-018.pdf Graphic file (type pdf)
+ <use Informe-018.pdf>
+Package pdftex.def Info: Informe-018.pdf used on input line 679.
+(pdftex.def)             Requested size: 398.93158pt x 398.94847pt.
+
+[18 <C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining/Informe-018.pdf>
+] <Informe-019.pdf, id=114, 433.62pt x 433.62pt>
+File: Informe-019.pdf Graphic file (type pdf)
+ <use Informe-019.pdf>
+Package pdftex.def Info: Informe-019.pdf used on input line 728.
+(pdftex.def)             Requested size: 398.93158pt x 398.94847pt.
+ [19]
+[20 <C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining/Informe-019.pdf>
+] <Informe-020.pdf, id=127, 433.62pt x 433.62pt>
+File: Informe-020.pdf Graphic file (type pdf)
+ <use Informe-020.pdf>
+Package pdftex.def Info: Informe-020.pdf used on input line 777.
+(pdftex.def)             Requested size: 398.93158pt x 398.94847pt.
+ [21 <C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining/Informe-020.pdf
+>]
+Cap\'{\i }tulo 4.
+[22
+
+] [23] [24] <Informe-022.pdf, id=148, 433.62pt x 433.62pt>
+File: Informe-022.pdf Graphic file (type pdf)
+
+<use Informe-022.pdf>
+Package pdftex.def Info: Informe-022.pdf used on input line 917.
+(pdftex.def)             Requested size: 398.93158pt x 398.94847pt.
+ [25 <C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining/Informe-022.pdf
+>] <Informe-023.pdf, id=158, 433.62pt x 433.62pt>
+File: Informe-023.pdf Graphic file (type pdf)
+
+<use Informe-023.pdf>
+Package pdftex.def Info: Informe-023.pdf used on input line 934.
+(pdftex.def)             Requested size: 398.93158pt x 398.94847pt.
+ [26 <C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining/Informe-023.pdf
+>] <Informe-024.pdf, id=168, 433.62pt x 433.62pt>
+File: Informe-024.pdf Graphic file (type pdf)
+
+<use Informe-024.pdf>
+Package pdftex.def Info: Informe-024.pdf used on input line 956.
+(pdftex.def)             Requested size: 398.93158pt x 398.94847pt.
+ <Informe-025.pdf, id=169, 433.62pt x 433.62pt>
+File: Informe-025.pdf Graphic file (type pdf)
+
+<use Informe-025.pdf>
+Package pdftex.def Info: Informe-025.pdf used on input line 965.
+(pdftex.def)             Requested size: 398.93158pt x 398.94847pt.
+ [27 <C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining/Informe-024.pdf
+>] <Informe-026.pdf, id=179, 433.62pt x 433.62pt>
+File: Informe-026.pdf Graphic file (type pdf)
+
+<use Informe-026.pdf>
+Package pdftex.def Info: Informe-026.pdf used on input line 983.
+(pdftex.def)             Requested size: 398.93158pt x 398.94847pt.
+ [28 <C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining/Informe-025.pdf
+>] <Informe-027.pdf, id=189, 433.62pt x 433.62pt>
+File: Informe-027.pdf Graphic file (type pdf)
+
+<use Informe-027.pdf>
+Package pdftex.def Info: Informe-027.pdf used on input line 997.
+(pdftex.def)             Requested size: 398.93158pt x 398.94847pt.
+ [29 <C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining/Informe-026.pdf
+>] [30 <C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining/Informe-027.p
+df>] <Informe-028.pdf, id=209, 433.62pt x 433.62pt>
+File: Informe-028.pdf Graphic file (type pdf)
+
+<use Informe-028.pdf>
+Package pdftex.def Info: Informe-028.pdf used on input line 1033.
+(pdftex.def)             Requested size: 398.93158pt x 398.94847pt.
+ [31 <C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining/Informe-028.pdf
+>] <Informe-030.pdf, id=219, 433.62pt x 433.62pt>
+File: Informe-030.pdf Graphic file (type pdf)
+
+<use Informe-030.pdf>
+Package pdftex.def Info: Informe-030.pdf used on input line 1071.
+(pdftex.def)             Requested size: 398.93158pt x 398.94847pt.
+ [32] [33 <C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining/Informe-03
+0.pdf>] [34] [35] [36] [37] [38] [39] [40] [41] [42]
+[43] [44] [45] [46] [47] <Informe-032.pdf, id=276, 433.62pt x 433.62pt>
+File: Informe-032.pdf Graphic file (type pdf)
+
+<use Informe-032.pdf>
+Package pdftex.def Info: Informe-032.pdf used on input line 1896.
+(pdftex.def)             Requested size: 398.93158pt x 398.94847pt.
+ [48 <C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining/Informe-032.pdf
+>] <Informe-033.pdf, id=287, 433.62pt x 433.62pt>
+File: Informe-033.pdf Graphic file (type pdf)
+
+<use Informe-033.pdf>
+Package pdftex.def Info: Informe-033.pdf used on input line 1934.
+(pdftex.def)             Requested size: 398.93158pt x 398.94847pt.
+ [49] [50 <C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining/Informe-03
+3.pdf>]
+(C:\Users\usuario\Desktop\Curso13-14\02Semestre\DataMining\Informe.aux) ) 
+Here is how much of TeX's memory you used:
+ 3658 strings out of 493921
+ 52233 string characters out of 3144870
+ 107765 words of memory out of 3000000
+ 6846 multiletter control sequences out of 15000+200000
+ 38502 words of font info for 78 fonts, out of 3000000 for 9000
+ 841 hyphenation exceptions out of 8191
+ 35i,7n,32p,1923b,280s stack positions out of 5000i,500n,10000p,200000b,50000s
+ <C:\U
+sers\usuario\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\tctt10
+00.pk> <C:\Users\usuario\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\d
+pi600\tcrm1000.pk><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfont
+s/cm/cmbx10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/
+cm/cmbx12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm
+/cmmi10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/c
+mr10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr1
+2.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr7.pf
+b><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsltt10.pf
+b><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
+Output written on Informe.pdf (51 pages, 598949 bytes).
+PDF statistics:
+ 335 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 95 words of extra memory for PDF output out of 10000 (max. 10000000)
+

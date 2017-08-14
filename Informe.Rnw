@@ -1,0 +1,755 @@
+\documentclass{report}
+
+\begin{titlepage}
+\title{\Huge{\textbf{Informe}}}
+\author{\Large{Ana Medina García}}
+\date{\today}
+\end{titlepage}
+
+\usepackage[margin=0.8in]{geometry}
+\usepackage[spanish]{babel}
+\usepackage{indentfirst}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+\parskip=4mm
+
+\maketitle
+\chapter{Introducción}
+\setlength{\parindent}{8pt}
+
+\section{Estudio de la recidiva en pacientes con cáncer de mama}
+
+El cáncer de mama incluye un grupo de enfermedades heterogéneas que pueden ser clasificadas en base tanto a características moleculares como clínico-patológicas. La mejora en la detección temprana de tumores primarios y el desarrollo de terapias dirigidas (medicaicón que bloquea el crecimiento y diseminación del cáncer interfiriendo con determinadas moléculas responsables del crecimiento del tumor y la progresión de la enfermedad), junto con el uso sistemático de quimioterapia adyuvante (quimioterapia que se aplica después de un tratamiento principal, como la intervención quirúrjica), ha reducido drásticamente los índices de mortalidad e incrementado la supervivencia libre de enfermedad en cáncer de mama. No obstante, los datos reflejan que un tercio de las pacientes operadas de un tumor mamario aún terminan desarrollanfo metástasis, lo que seriamente merma las espectativas sobre un desenlace positivo de la enfermedad.
+
+Por otro lado, el riesgo de recidiva tras la resección de un tumor no es constante a lo largo del tiempo. Un análisis el patron de recidiva, en datos con seguimiento de paciente durante un período largo de tiempo, revela una función bimodal con dos picos claramente diferenciados a los 1.5 años (recidiva temprana) y a los 5 años (recidiva tardía) seguido por períodos de tiempo en los cuales el riesgo de recidiva tiende a cero. Algunos investigadores han establecido una relación causal entre el acto quirúrgico y el patron de recidiva bimodal, de tal forma que la resección del tumor primario podría acelerar el crecimiento del foco metastásico latente mediante la alteración del balance entre factores pro- y anti-angionénicos (sustancias que potencian o inhiben el crecimiento de vases sanguíneos - angiogénesis). Esta hipótesis está avalada por el hecho de que los dos picos de recidiva aparecen con independencia de otros factores distintos a la cirugía, como la presencia de ganglios axilares afectados, el tipo de cirugía o la administración de quimioterapia adyuvante (es decir, analizando las funciones de riesgo en base a estas variables, igualmente aparecen los picos en la función de riesgo). Otros estudios también demuestran que la distribución bimodal aparece encluso independientemente del estado de los receptores hormonales, cuando la evidencia demuestra que los tumores ER-negativos están comúnmente asociados con un alto riesgo de recidiva. Otros estudios sugieren que la dinámica de la recidiva del tumor puede ser una consecuencia del procedimiento quirúrgico para eliminr el tumos primario, debido a la alteración de los niveles circulantes en salngre de VEGF, TNFa y otras citoquinas inflamatorias. No obstane, todavía es necesario mayor evidencia empírica que demuestre una relación a nivel molecular entre la cirugía de un tumo primario de mama y el patrón de recurrencia bimodal.
+
+
+\chapter{Análisis y limpieza de datos}
+\setlength{\parindent}{8pt}
+
+\section{Análisis de datos}
+
+\subsection{Datos de pacientes}
+
+Vamos a realizar un estudio de la recidiva en un grupo de pacientes de cáncer de mama. Los 75 pacientes incluídos en el estudio fueron operados de un tumor primario de mama en el Hospital Universitario Virgen de la Victoria (HUVV, Málaga, España) entre los años 1998 y 2005. Todos los pacientes proporcionaron el consentimiento informado para su participación en el estudio. Los pacientes fueron tratados y su evolución controlada de acuerdo a los protocolos establecidos en el Servicio de Oncología Clínica, en base a la evidencia científica y a las recomendaciones internacionales.
+Toda la investigación clínica se desarrolló de acuerdo a los principios epresados en la declaración de Helsinki. Ninguno de los pacientes recibió terapia neo-adyuvante, y los datos clínico-patológicos fueron obtenidos por revisión de historias clínicas.
+
+\subsection{Datos inmunohistoquímicos}
+
+Las muestras de tumor se clasificaron de acuerdo al subtipo intrínseco determinado por coloración inmunohistoquímica de la preparación de tejido, en base a la expresión de anticuerpos específicos contra los receptores de estrógeno (ER), receptores de progesterona (PR), la proteína Ki67, asociada con la proliferación celular, el receptor 1 de factor de crecimiento epidermal (EGFR1), el factor de crecimiento endotelial vascular (VEGF) y la citoqueratina CK5/6. El nivel de expresión del proto-oncogen HER2 se determinó mediante la prueba del HercepTest. La interpretación de los datos inmunohistoquímicos se realizó por dos patólogs en un estudio ciego a las caractrísticas clínico-patológicas y de evolución de los pacientes.
+
+\subsection{Análisis}
+
+En primer lugar, cargamos los datos del estudio uniendo los datos clínicos con los datos de marcadores.
+Utilizando la función 'summary()' podemos obtener un resumen de los campos y sus valores en el conjunto de datos.
+
+<<>>=
+workingDir <- "C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining"
+dataDir <- file.path(workingDir, "Datos")
+resultsDir <- file.path(workingDir, "Resultados")
+setwd(workingDir)
+misDatos <- read.csv("DatosClinicos.csv")
+markers <- read.csv2(file=paste("Markers.csv"))
+misDatos <- cbind(misDatos, markers[,2:5])
+summary(misDatos)
+@
+
+Es muy importante conocer el significado de los datos que se van a analizar.
+Resumimos a continuación la información más relevante de los campos y sus posibles valores:
+
+\begin{itemize}
+\item Fenotipo (fenotipo)
+  \begin{itemize}
+  \item Basal like:
+  \item Luminal A:
+  \item Luminal B:
+  \item HER2 enriched
+  \item Luminal-HER2
+  \end{itemize}
+\item Grupo (grupo):
+  \begin{itemize}
+  \item grupo A: no recidiva
+  \item grupo B: recidva temprana
+  \item grupo C: recidiva tardia
+  \end{itemize}
+\item Estado glogal (estadog): supervivencia global (SG)
+  \begin{itemize}
+  \item 0: vivo
+  \item 1: muerto
+  \item 2: muerto por causas agenas al cáncer
+  \end{itemize}
+\item Tiempo de seguimiento: (o de último control - en caso de muerte)
+  \begin{itemize}
+  \item sgd: en días
+  \item sgm: en meses
+  \item sga: en años
+  \end{itemize}
+\item Recidiva (recid):
+  \begin{itemize}
+  \item 1: sí
+  \item 2: no
+  \end{itemize}
+\item Tiempo de recidiva: supervivencia libre de enfermedad (SLE)
+  \begin{itemize}
+  \item iled: en días
+  \item ilem: en meses
+  \item ilea: en años
+  \end{itemize}
+\item Tamaño del tumor (tam)
+\item Número de ganglios afectados (ngang)
+\item Edad (edad)
+\end{itemize}
+
+
+
+\section{Limpieza de datos}
+
+Para realizar la limpieza de datos debemos, en primer lugar, estudiar cómo se han guardado los datos. Para ello, utilizamos las funciones 'class()'y 'str()' que nos indican, respectivamente, el tipo o clase del conjunto de datos y los tipos de datos de cada campo.
+
+<<>>=
+class(misDatos)
+str(misDatos)
+@
+
+En este caso, observamos que nuestra tabla de datos se ha guardado como un objeto de tipo 'data.frame'. Además, podemos encontrar que algunos de los campos de la tabla se han guardado de forma que no nos interesa. Por ejemplo, la variable tamaño (tam) se ha guardado como Factor cuando debería ser numérico continuo. Para hayar la causa de esto, podemos utilizar la función 'levels()' sobre la variable 'tam' de forma que obtengamos todos los valores posibles que toma esta variable.
+<<>>=
+levels(misDatos$tam)
+@
+
+Podemos observar de esta forma que, probablemente, la presencia del valor 'DESCONOCIDO'  en el campo tam es el que provoca que se hayan guardado los datos como Factor. 
+Para evitar esto, los valores perdidos en R se etiquetan como 'NA', permitiendo así guardarlos como numéricos.
+Una de las opciones que se pueden llevar a cabo para resolver la ausencia de datos de tamaño, intentando no perder valor estadístico en los datos, es la imputación. En este caso hemos decidido utilizar la media para imputar los datos perdidos. Para ello buscamos los registros que contengan el valor 'DESCONOCIDO' en el campo tam y lo sustituimos por el valor 'NA', lo cual nos permite cambiar el tipo de la variable de Factor a Numérico y luego sustituir los valores NA por el tamaño medio de los datos.
+<<>>=
+tamAux<-misDatos$tam
+tamAux<-as.numeric(as.character(tamAux))
+meanTam<-summary(tamAux)[4]
+misDatos$tam[misDatos$tam=="DESCONOCIDO"] <- NA 
+misDatos$tam <- as.numeric(as.character(misDatos$tam))
+misDatos$tam[is.na(misDatos$tam)] <- meanTam
+@
+
+Del mismo modo, los posibles valores del campo fenotipo y el número de veces que aparecen deben modificarse para no perder valor estadístico en los datos.
+<<>>=
+summary(misDatos$fenotipo)
+@
+
+Ya que sólo tenemos un caso de fenotipo Luminal-HER2 y éste es un subtipo de Luminal B, lo sustituimos por el tipo Luminal B:
+<<>>=
+misDatos$fenotipo[misDatos$fenotipo=="Luminal-HER2"] <- "Luminal B"
+@
+
+Para obtener resultados estadísticamente significativos necesitamos eliminar los casos en los que no hay fenotipo registrado. Como solución provisional a los casos sin fenotipo, los incluimos en el tipo Luminal B, ya que es el más común:
+<<>>=
+misDatos$fenotipo[misDatos$fenotipo==""] <- "Luminal B"
+summary(misDatos$fenotipo)
+@
+
+
+\chapter{Modelos predictivos}
+\setlength{\parindent}{8pt}
+
+\section{Regresión logística}
+
+Utilizamos un modelo de regresión logística para estimar un modelo predictivo de recidiva de pacientes en base a diferentes factores pronóstico de la enfermedad: tamaño del tumor, número de ganglios afetados, edad del paciente y fenotipo.
+Establecemos un umbral de 0.5 para asignar los valores de la predicción.
+Finalmente, calculamos la matriz de confusión o tabla de contingencia del modelo y obtenemos valores de precisión del modelo como la "accuracy", la sensibilidad y la especificidad. Para esto utilizamos la librería 'caret'(Classifiaction and Regession Training), con la cual podemos obenter mediante un única función, cofusionMatrix(), la tabla de contingencia, la accuracy, la sensibilidad y otros valores de interés.
+
+<<>>=
+library(caret)
+regLog <- glm(recid~tam+ngang+edad+fenotipo, data=misDatos, family=binomial)
+summary(regLog)
+
+pred <- predict(regLog, misDatos, type="response")
+
+# utilizamos el umbral 0.5 para asignar los valores 0 o 1 a la predicción
+pred.th <- pred
+pred.th[pred.th<0.5]<-0
+pred.th[pred.th>=0.5]<-1
+
+#calculamos la matriz de confusión y obtenemos la accuracy, la sensibilidad y la especificidad
+confMatrix <- confusionMatrix(pred.th,misDatos$recid)
+confMatrix$table
+confMatrix$overall[1]
+confMatrix$byClass[1]
+confMatrix$byClass[2]
+@
+
+\subsection{Cálculo del área bajo la curva ROC:}
+El cálculo del área bajo la curva ROC, se basa en que no se aplica un umbral para la predicción, sino que se cogen todos los valores obtenidos al hacer la predcción, se ordenan, y se van utilizando como umbral cada uno de ellos. Para cada predicción con cada uno de estos valores de umbral se obtiene una sensibilidad y una especificidad y se construye una gráfica donde cada punto representa sensibilidad frente a (1-especificidad) en la predicción con un umbral concreto. Estos puntos se unen en una curva, dejando un área bajo la misma que indica la eficacia del modelo. El valor del área será de entre 0 y 1, siendo el modelo más eficaz cuanto más se acerque a 1 este valor.
+
+Para mostrarlo, calculamos el área bajo la curva ROC de la regresión logística anterior y generamos la gráfica de la curva:
+
+<<fig=TRUE>>=
+library(pROC)
+obj.roc <- roc(misDatos$recid, pred, smooth=FALSE, auc=TRUE)
+auc(obj.roc)
+auc
+plot(obj.roc, main="Regresión logística - Curva ROC")
+@
+
+
+Implementamos ahora un esquema de validación hold-out (60\% training, 40\% test) para calcular el procentaje de clasificación correcta (ACC, accuracy) promedio en training y test (generalización). Estudiamos, además, cómo varía el ACC para test en función del número de repeticiones del hold-out:
+
+<<>>=
+library(caret)
+holdOut <- function(prc.train, repNum) {
+  holdOut.acc<-NULL
+  for(i in 1:repNum) {
+    
+    indt <- sample(length(misDatos$recid), length(misDatos$recid)*prc.train/100)
+    dat.train <- misDatos[indt,] #conjunto de training
+    dat.test <- misDatos[-indt,] #conjunto de test
+    
+    rl.train <- glm(recid~tam+ngang+edad+fenotipo,data=dat.train,family=binomial)
+    rl.train$xlevels[["fenotipo"]] <- union(rl.train$xlevels[["fenotipo"]], levels(dat.test$fenotipo))
+    pred.test <- predict(rl.train, dat.test, type="response")
+    
+    # utilizamos el umbral 0.5 para asignar los valores 0 o 1 a la prediccion
+    pred.test[pred.test<0.5]<-0
+    pred.test[pred.test>=0.5]<-1
+    pred.test<-factor(pred.test, levels= c("0","1"))
+    
+    #calculamos la matriz de confusion y la accuracy
+    confusionMatrix <- confusionMatrix(pred.test, dat.test$recid)
+    accuracy <- confusionMatrix$overall[1]
+    holdOut.acc<-c(holdOut.acc,accuracy)
+  }
+  
+  #calculamos la accuracy promedio (generalización)
+  accG<-mean(holdOut.acc,na.rm=TRUE)
+  return (accG)
+}
+@
+
+Para estudiar la variación del ACC en función del número de repeticiones llamamos a la función holdOut en bucle (de 5 a 100 repetiones aumentando de 5 en 5):
+<<fig=TRUE>>=
+var.accG<-NULL
+for(i in seq(5,100,by=5)){
+var.accG <- c(var.accG,holdOut(60,i))
+}
+var.accG
+hist(var.accG, main="Variación de accuracy")
+@
+
+\section{Aprendizaje supervisado}
+
+\subsection {Redes neuronales: (MLP)}
+La función de cada neurona sería el sumatorio de los impulsos que le llegan a través de las dendritas multiplicada cada una por el grado de importancia de esa conexión. Las conexiones entre neuronas se refuerzan o se debilitan  dependiendo de la experiencia. Algunos datos a tener en cuenta:
+LTD: depresión sináptica.
+LTP: potenciación sináptica.
+La salida final sería un logaritmo (entre 0 y 1).
+Las funciones de las neuronas intermedias son tangentes hiperbólicas (entre -1 y 1).
+Algoritmo de retropropagación de errores: si la salida no es la deseada se vuelve hacia atrás modificando las conexiones para que la próxima vez, esa misma entrada genere una más parecida a la deseada.
+Es importante ajustar bien la constante de aprendizaje para que no oscile demasiado pero tampoco tarde demasiado en aprender.
+
+<<fig=TRUE, results=hide>>=
+library(nnet)
+nn.fit<-nnet(recid~tam+ngang+edad+fenotipo,data=misDatos,size=5,entropy= TRUE,maxit=1000,decay=5e-4)
+nn.pred <- predict(nn.fit, misDatos, type="raw")
+nn.roc <- roc(misDatos$recid, nn.pred, smooth=FALSE, auc=TRUE)
+plot(nn.roc, main="Redes Neuronales - Curva ROC")
+auc(nn.roc)
+@
+
+\subsection{Máquinas de soporte vectorial: (SVM)}
+Se trata de encontrar los vectores de soporte, es decir, los patrones de cada tipo más cercanos al plano de separación, y maximizar la distancia de éstos al plano. Cuando la separación no puede ser lineal se utiliza una función kernel no lineal.
+
+<<fig=TRUE>>=
+library(e1071)
+svm.fit <- svm(recid~tam+ngang+edad+fenotipo,data=misDatos,cost=1000,gamma=1,probability=TRUE)
+svm.pred <- predict(svm.fit, misDatos, probability=TRUE)
+svm.roc <- roc(misDatos$recid, svm.pred, smooth=FALSE, auc=TRUE)
+plot(svm.roc, main="Máquinas de Soporte Vectorial - Curva ROC")
+auc(svm.roc)
+@
+
+\section{Evaluación de modelos}
+
+Vamos a analizar cómo influye la inclusión o no de variables en el modelo. Es decir, fijaremos un esquema de validación Hold-Out y probaremos a estimar modelos incluyendo diferentes combinaciones y número de variables. Para ello construimos una función 'holdOutG' generalizada, que implementa el método de validación conocido como Hold-Out y que toma como entrada los siguientes parámetros: la fórmula, los datos de ajuste del modelo y el número de simulaciones.
+De esta forma se puede utilizar esta función para aplicar la validación con cualquier modelo y conjunto de datos. Al tener la fórmula (y~) como parámetro, también se pueden elegir las variables que se utilizan. 
+Además, podremos estudiar la variación en la varianza del AUC promedio dependiendo del número de repeticiones de la simulación, ya que la función devolverá como resultado una lista que contendrá:
+\begin{itemize}
+\item Vector de AUC generalizadas (AUCg)
+\item Promedio de AUC generalizadas (AUCg.mean)
+\item Vector de AUC de tranning (AUCt)
+\item Promedio de AUC de trainning (AUCt.mean)
+\item Vector de ACC generalizadas (ACCg)
+\item Promedio de ACC generalizadas (ACCg.mean)
+\item Vector de ACC de tranning (ACCt)
+\item Promedio de ACC de tranning (ACCt.mean)
+\end{itemize}
+
+<<>>=
+holdOutG <- function(formula, datos, nSim, prc.train) {
+  AUCg <- NULL
+  #AUCt <- NULL
+  ACCg <- NULL
+  #ACCt <- NULL
+  for(i in 1:nSim) {
+    
+    indt <- sample(length(misDatos$recid), length(misDatos$recid)*prc.train/100)
+    dat.train <- datos[indt,] #conjunto de training
+    dat.test <- datos[-indt,] #conjunto de test
+    
+    rl.train <- glm(formula, data=dat.train, family=binomial)
+    pred.test <- predict(rl.train, dat.test, type="response")
+    
+    #calculamos la AUC (area bajo la curva ROC)
+    obj.auc <- auc(dat.test$recid, pred.test)
+    AUCg <- c(AUCg,obj.auc)
+    
+    # utilizamos el umbral 0.5 para asignar los valores 0 o 1 a la prediccion
+    pred.test[pred.test<0.5]<-0
+    pred.test[pred.test>=0.5]<-1 
+    
+    pred.test<-factor(pred.test, levels=c("0","1"))
+    
+    #calculamos la matriz de confusion y la accuracy
+    confMatrix<-confusionMatrix(pred.test, dat.test$recid)
+    accuracy <- confMatrix$overall[1]
+    ACCg <- c(ACCg,accuracy)
+   
+  }
+  #calculamos la auc promedio (generalización)
+  aucG <- mean(AUCg)
+  #calculamos la accuracy promedio (generalización)
+  accG<-mean(ACCg,na.rm=TRUE)
+  
+  obj.list <- list(AUCg=AUCg, AUCg.mean=aucG, ACCg=ACCg, ACCg.mean=accG)
+  return (obj.list)
+}
+@
+
+Utilizaremos esta función Hold-Out generalizada para ajustar modelos de regresión logística probando con diferentes combinaciones posibles de variables del conjunto de datos.
+Observando las gráficas obtenidas tras variar el número de repeticiones de la función, podemos ver que cuánto mayor es el número de repeticiones del holdOut, menor es la varianza o desviación estándar de la AUC promedio. Es decir, más se ajusta la  distribución de AUC a una NORMAL.
+La desviación estándar de la media muestral es el error estándar de la media:
+sd(AUCg-promedio) = var(AUCg)/sqrt(n)
+donde n es el tamaño de la muestra, en este caso el número de repts del holdOut.
+
+\subsection{Estimación de modelos de una sola variable}
+
+Como ejemplo y a modo de control, realizamos un ajuste del modelo para la variable 'grupo', del que, obviamente, esperamos obtener que esta variable es totalmente discriminativa, ya que representa los tres grupos correspondientes a la aparición o ausencia de recidiva:
+<<>>=
+lr.grupo <- holdOutG(recid~grupo, misDatos, 10, 60)
+lr.grupo
+@
+Como podemos observar en los resultados, la variable 'grupo' es totalmente discriminativa, ya que realiza la predicción con un 100\% de precisión, por lo que AUC = 1.
+
+Otra forma de probar esta dependencia es mediante la utilización de test estadísticos. Construimos ahora una tabla de contingencia entre la variable 'grupo' y la variable 'recidiva' para luego aplicarle un test de fisher y averiguar si las variables son dependientes:
+<<>>=
+tablaGrupo <- table(misDatos$grupo, misDatos$recid)
+chi2.tablaGrupo <- fisher.test(tablaGrupo)
+chi2.tablaGrupo
+@
+
+Hipótesis nula del test: las variables son independientes.
+Por lo tanto, al obtener como resultado un valor muy bajo de p-value, se rechaza la hipótesis nula. Es decir, podemos decir que las variables son dependientes.
+
+
+Realizaremos la estimación de modelos de una sóla variable para el esquema de validación HoldOut y evaluamos su rendimiento utilizando el área bajo la curva ROC:
+
+\subsubsection{Ajuste del modelo para la variable 'edad':}
+
+<<fig=TRUE>>=
+lr.edad <- holdOutG(recid~edad, misDatos, 10, 60)
+lr.edad
+var(lr.edad$AUCg)
+
+# Estudio de la variación del AUC promedio en función del número de repeticiones:
+edad.AUCmean<-NULL
+for(i in seq(5,100,by=5)){
+edad.AUCmean <- c(edad.AUCmean,holdOutG(recid~edad, misDatos, 10, 60)$AUCg.mean)
+}
+edad.AUCmean
+hist(edad.AUCmean, main="Variación de AUC - Edad")
+@
+
+\subsubsection{Ajuste del modelo para la variable 'tamaño':}
+<<fig=TRUE>>=
+lr.tam <- holdOutG(recid~tam, misDatos, 10, 60)
+lr.tam
+var(lr.tam$AUCg)
+
+# Estudio de la variación del AUC promedio en función del número de repeticiones:
+tam.AUCmean<-NULL
+for(i in seq(5,100,by=5)){
+tam.AUCmean <- c(tam.AUCmean,holdOutG(recid~tam, misDatos, 10, 60)$AUCg.mean)
+}
+tam.AUCmean
+hist(tam.AUCmean, main="Variación de AUC - Tamaño")
+@
+
+
+\subsubsection{Ajuste del modelo para la variable 'número de ganglios':}
+<<fig=TRUE>>=
+lr.ngang <- holdOutG(recid~ngang, misDatos, 10, 60)
+lr.ngang
+var(lr.ngang$AUCg)
+
+# Estudio de la variación del AUC promedio en función del número de repeticiones:
+ng.AUCmean<-NULL
+for(i in seq(5,100,by=5)){
+ng.AUCmean <- c(ng.AUCmean,holdOutG(recid~ngang, misDatos, 10, 60)$AUCg.mean)
+}
+ng.AUCmean
+hist(ng.AUCmean, main="Variación de AUC - Nº ganglios")
+@
+
+
+\subsubsection{Ajuste del modelo para la variable 'fenotipo':}
+<<fig=TRUE>>=
+lr.fenotipo <- holdOutG(recid~fenotipo, misDatos, 10, 60)
+lr.fenotipo
+var(lr.fenotipo$AUCg)
+
+# Estudio de la variación del AUC promedio en función del número de repeticiones:
+fen.AUCmean<-NULL
+for(i in seq(5,100,by=5)){
+fen.AUCmean <- c(fen.AUCmean,holdOutG(recid~fenotipo, misDatos, 10, 60)$AUCg.mean)
+}
+fen.AUCmean
+hist(fen.AUCmean, main="Variación de AUC - Fenotipo")
+@
+
+
+\chapter{Análisis de microarrays}
+\setlength{\parindent}{8pt}
+
+Los microarrays son plataformas experimentales que permiten medir la presencia y/o expresión de genes. 
+Se trata de un formato experimental basado en la síntesis de sondas, que represental los genes (o proteínas, o metabolitos), sobre un sustrato sólido (cristal, plástico, sílice, ...), y expuestos a las moléculas diana (la muestra).
+El funcionamiento de los microarrays se basa en convertir niveles de hibridación entre sondas y moléculas a niveles de expresión del gen correspondiente a la sonda. 
+El nivel de hibridación entre la sonda específica (probe) y la molécula diana (target) se indica generalmente mediante fluorescencia y se mide por análisis de imagen, e indica el nivel de expresión del gen correspondiente a la sonda muestra.
+Existen diferentes tipos de microarrays:
+\begin{itemize}
+  \item De proteínas.
+  \item De tejidos.
+  \item De DNA:
+    \begin{itemize}
+    \item Arrays de CGH.
+    \item SNPs.
+    \end{itemize}
+  \item De expresión:
+    \begin{itemize}
+    \item De cDNA.
+    \item De oligonucleótidos: GeneChip Affymetrix y otras marcas.
+    \end{itemize}
+\end{itemize}
+
+\section{Aplicaciones de los microarrays}
+Entre las numerosas aplicaciones que tienen los experimentos con microarrays podemos destacar algunas como:
+\begin{itemize}
+  \item Estudio de genes que se expresan diferencialmente entre varias condiciones (sanos/enfermos, tratados/no tratados, etc.).
+  \item Clasificación molecular en enfermedades complejas.
+  \item Identificación de genes característicos de una patología (firma o "signature").
+  \item Predicción de respuesta a un tratamiento.
+  \item Detección de mutaciones y polimorfismos de un único gen (SNP).
+\end{itemize}
+
+\section{Microarrays de 1-Color}
+Son microarrays de oligonicleótidos sintetizados in situ, con un diseño más avanzado que los de dos colores. Utilizan tecnologías desarrolladas en el entorno de la microelectrónica. Algunos rasgos distintivos de este tipo de microarrays son:
+\begin{itemize}
+  \item No se basan en hibridación competitiva: cada chip contiene muestras de un solo tipo.
+  \item Las sondas se sintetizan directamente sobre el chip, en lugar de sintetizarlas in vitro y adherirlas después.
+  \item Cada gen está representado por un grupo de sondas cortas (25 bases), en vez de por una sola sonda.
+\end{itemize}
+
+\subsection{Chips de Affymetrix}
+Affymetrix es la compañía líder en la fabricación de chips de un color; se denominan genéricamene GeneChips. 
+Algunos de ellos contienen genomas enteros con más de 50.000 grupos de sondas o "probesets". Un grupo de sondas mide niveles de mRNA de un único gen. Cada grupo consta de múltiples pares de celdillas. Tras la síntesis de los "oligos", se realiza la hibridación, depositando el mRNA marcado del tejido sobre cada chip.
+
+\section{Proceso de análisis de microarrays}
+Tras el diseño experimental y la obtenición del Chip-Affy hibridado, se obtienen imágenes del mismo que deben ser analizadas y deben pasar unos test de calidad para poder procesarlas y obtener información significativa de ellas. 
+Podemos dividir el proceso de análisis en dos grandes bloques: el prep-rocesamiento o análisis de bajo nivel, y el análisis de alto nivel. Tras este último debe contarse siempre con una interpretación y una verificación biológica de los resultados, que determinará si los resultados son coherentes y significativos o debe volver a realizarse el diseño del experimento.
+Para llevar a cabo todo este proceso de análisis de microarrays utilizaremos el software del proyecto Bioconductor.
+Bioconductor es un proyecto de software libre (código y desarrollo abiertos) basado en el lenguaje de programación R, que proporciona herramientas para el análisis de datos genómicos de alto rendimiento. El proyecto se inició en el año 2001 e incluye a muchos desarrolladores de diferentes contienentes. Incluye una gran cantidad de paquetes que presentan diferentes funcionalidades como análisis de microarrays, secuenciación y detección de SNPs, entre muchas otras.
+Los objetivos del proyecto Bioconductor son:
+\begin{itemize}
+  \item Proporcionar acceso a potentes métodos estadísticos y gráficos para el análisis de datos genómicos.
+  \item Facilitar la integración de metadatos biológicos en el análisis de datos experimentales.
+  \item Permitir el desarrollo rápido de software extensible, interoperable y escalable.
+  \item Promover la documentación de alta calidad y la investigación reproducible.
+  \item Proporcionar formación en métodos de cálculo y estadística.
+\end{itemize}
+
+La instalación de bioconductor se basa en basa en dos instrucciones:
+\begin{itemize}
+\item > source("http://www.bioconductor.org/biocLite.R")
+\item > biocLite()
+\end{itemize}
+
+Para instalar cualquiera de los paquetes pertenecientes a Biocinductor utilizamos los comandos:
+\begin{itemize}
+\item > source("http://www.bioconductor.org/biocLite.R")
+\item > biocLite("nobredelpaquete")
+\end{itemize}
+
+\subsection{Lectura de datos de expresión}
+
+Los ficheros CEL contienen el resultado del análisis de imagen sobre el proceso de hibridación de los microarrays.
+Cada fichero CEL contiene la información correspondiente a un individuo. Mediante un proceso de lectura de estos ficheros se construye una estructura que tendrá como columnas los individuos y como filas la expresión de cada gen. Toda esta "matriz" de información se guarda en un fichero RData.
+
+El paquete affy del proyecto Bioconductor proporciona métodos para el análisis y la exploración de datos a nivel de sonda en chips de Affymetrix.
+
+Utilizando el paquete affy cargamos los datos del fichero RData y los guardamos en un objeto de la clase affy. 
+A este objeto podemos añadirle tanto información fenotípica como meta-información, gracias al paquete mirna20cdf. Al hacer esto tenemos un objeto de la clase affy (mirna) el cual contrendrá un objeto que será la matriz de expresión (con id de pacientes por columnas y genes por filas) y otro objeto con una submatriz de los datos fenotípicos con las columnas que se hayan elegido (entre ellos el id de paciente), en este caso id, fenotipo y grupo. Para luego relacionar estos dos objetos utilizaremos los id de los pacientes.
+
+
+<<>>=
+library(affy)
+load("C:/Users/usuario/Desktop/Curso13-14/02Semestre/DataMining/DatExp.RData")
+library(mirna20cdf)
+vmd<-data.frame(labelDescription=c("id","fenotipo", "grupo"))
+phenoData(mirna)<-new("AnnotatedDataFrame", data=misDatos[,1:3], varMetadata=vmd)
+show(mirna)
+
+@
+
+Como podemos observar, mediante el comando 'show' obtenemos información sobre nuestro objeto de clase AffyBatch. El tamaño de los arrays es de 478x478 posiciones y, en nuestro experimento, disponemos de 75 arrays miRNA-2-0 de Affymetrix en los que se interrogan 20706 miRNAs.
+
+\section{Pre-procesamiento (Low-level analysis)}
+Los métodos gráficos permiten testar la calidad de los datos para decidir su exclusión o no del proceso de análisis. Este proceso está formado por:
+\begin{enumerate}
+\item Control de calidad. En los chips de Affymetrix basado en:
+  \begin{itemize}
+  \item Análisis de las distribuciones de los datos (density plots)
+  \item Estudio de la degradación del RNA (digestion plots)
+  \item Estudio de los cuartiles de la distribución (box plots)
+  \item Ajuste de modelos a nivel de sonda (gráficos de RLE y NUSE)
+  \end{itemize}
+\item Normalización
+  \begin{itemize}
+  \item Algoritmo RMA para los chips Affymetrix
+  \end{itemize}
+\item Filtrado de genes
+\end{enumerate}
+
+\subsection{Control de calidad}
+
+\subsubsection{1. Density plots}
+El análisis de las distribuciones de los datos permite identificar niveles de expresión diferentes entre los arrays.
+
+<<fig=TRUE>>=
+#PRE-PROCESAMIENTO (LOW-LEVEL ANALYSIS)
+#control de calidad - density plots
+
+hist(mirna, main="Signal Distribution")
+@
+
+
+Si alguna de las curvas estuviera claramente desplazada, indicaría que, por algún motivo, la lectura de intensidad del microarray no está bien y conviene eliminar la información de ese microarray del experimento.
+
+\subsubsection{2. Digestion plots}
+Los gráficos de degradación de RNA permiten evaluar la calidad de las muestras usadas en todos los arrays.
+
+<<fig=TRUE>>=
+#control de calidad- digestion plots
+
+deg<-AffyRNAdeg(mirna)
+plotAffyRNAdeg(deg)
+
+@
+
+Si alguna de las curvas cayera notablemente hacia abajo (o no se mantuviera prácticamente horizontal) indicaría que la muestra de ese microarray no ha hibridado de forma correcta. Convendría eliminar la información de ese microarray del experimento.
+
+\subsubsection{3. Box plots}
+Los diagramas de cajas permiten estudiar los cuartiles de las distribuciones de los valores de expresión en cada array.
+Se esperan valores similares para las medianas si no existe anomalía en la distribución de los datos.
+Para tener una mejor visualización de los datos, se ha dividido en dos diagramas de cajas el conjunto:
+
+
+<<fig=true>>=
+#control de calidad- box plots
+
+#par: sirve para ajustar la visibilidad de las etiquetas
+#las: sirve para poner las etiquetas verticalmente 
+opt<-par(las=2,cex.axis=0.7)
+boxplot(mirna[1:40,], las=2, col="red",main= "Raw data")
+par(opt)
+
+@
+
+<<fig=TRUE>>=
+opt<- par(las=2, cex.axis=0.7)
+boxplot(mirna[41:75,], las=2, col="red",main="Raw data")
+par(opt)
+@
+
+El posterior proceso de normalización permite eliminar las anomalías y preparar los datos para su comparación mediante el análisis de expresión diferencial.
+
+\subsubsection{4. RLE}
+Un modelo lineal de datos a nivel de sonda permite analizar las distribuciones de los RLE (valores de expresión log-relativa).
+Los RLE se calculan para cada conjunto de sondas comparando el valor de expresión en cada array respecto la mediana del valor de expresión para ese conjunto de sondas a lo largo de todos los arrays.
+El análisis de la distribución de los RLE permite comprobar si los genes están variando sus valores de expresión para los diferentes arrays.
+
+<<fig=TRUE>>=
+#control de calidad- RLE
+library(affyPLM)
+Pset<-fitPLM(mirna)
+RLE(Pset, main= "Relative Log Expression", las=3, cex.axis=0.7, ylim=c(-0.5,0.5), outline=FALSE, col="mistyrose", whisklty=0, stapletlty=0)
+
+@
+
+
+\subsubsection{5. NUSE}
+Los errores estándares desescalados y normalizados (NUSE) derivados del ajuste se usan también como medida de calidad. Arrays con distribuciones desplazadas y dispersión mayor que el resto podrían alterar el posterior análisis de expresión diferencial.
+
+<<fig=TRUE>>=
+#control de calidad-NUSE
+
+NUSE(Pset, main="Normalized Unscaled Standard Errors", las=3, cex.axis=0.7, ylim=c(0.95, 1.1), outline=FALSE, col="lightblue", whisklty=0, staplelty=0)
+
+@
+
+Las cajas del "boxplot" que estén significativamente desplazadas de la línea media probablemente generan ruido y normalmente conviene eliminar estos casos del experimento. 
+En nuestro caso, podemos afirmar que se encuentran significativamente desplazadas las cajas de las muestras 7, 28, 43 y 63.
+
+\subsection{Normalización de los datos}
+
+La normalización se refiere a los métodos utilizados para eliminar variaciones sistemáticas en los datos de microarrays. En chips de Affymetrix, el método comúnmente usado en la literatura es el algoritmo RMA (promedio de multiarray robusto), el cual se basa en:
+\begin{enumerate}
+\item Corrección de fondo, que ajusta las lecturas de intensidad para señales no específicas.
+\item Normalización entre arrays, para controlar la variabilidad técnica del gen experimento.
+\item Resumen de expresión, que calcula el nivel de expresión del gen a partir de todas las sondas que hacen diana en el tránscrito.
+\end{enumerate}
+
+En nuestro experimento, eliminaremos los casos conflictivos mencionados anteriormente en el control de calidad NUSE.
+La visualización posterior mediante un diagrama de cajas permite comprobar los resultados del proceso de normalización.
+
+<<fig=TRUE>>=
+#normalización de datos
+
+idrem<-c(-7,-28,-43,-63)
+mirna<-mirna[,idrem]
+samples<-sampleNames(protocolData(mirna))
+sampleNames(phenoData(mirna))<-samples
+eset_rma<-rma(mirna)
+boxplot(eset_rma,main="RMA",names=sampleNames(eset_rma),cex.axis=0.65,las=3,col="lightgreen")
+@
+
+Para poder realizar la normalización de datos mediante el algoritmo RMA debemos asegurarnos de que los nombres de las muestras entre los datos de expresión (protocolData) y los datos fenotipicos (phenoData), coinciden. Como esto no era así en un principio, los hemos igualado utilizando una variable (samples).
+
+
+\subsection{Filtrado de datos}
+
+El objetivo del filtrado de datos es eliminar del estudio aquellos genes que no interesan para el posterior análisis de alto nivel.
+Existen filtrados de tipo específico y no-específico. Los del segundo tipo son típicos para excluir genes cuyos valores de expresión no cambian durante el experimento.
+En nuestro caso filtraremos sólo los genes hibridados con sonda de humanos, a lo cual hace referencia 'hsa'. 
+
+<<>>=
+#filtrado de datos
+library(genefilter)
+eset_rma<-eset_rma[grep("(^hsa|^v11_hsa)",rownames(exprs(eset_rma))),]
+eset_rma_filtered<-nsFilter(eset_rma,remove.dupEntrez=FALSE,require.entrez=FALSE,var.cutof=0.66)$eset
+
+@
+
+
+\subsubsection{Análisis del agrupamiento mediante PCA}
+
+Se trata de realizar una agrupación de las muestras en base a los datos que capturan la máxima variabilidad de los datos.
+Una visualización de los dos primeros componentes del análisis PCA muestra la estructura general de los datos y la agrupación de los experimentos.
+En nuestro gráfico podremos ver, diferenciados por colores, los grupos a los que pertenece cada individuo y, mediante etiquetas, el fenotipo de cada uno.
+
+<<fig=TRUE>>=
+#análisis del agrupamiento mediante PCA
+library(affycoretools)
+etq<-pData(eset_rma_filtered)[,2]
+levels(etq)<-c(" ","BL","H2","LH","LA","LB")
+plotPCA(eset_rma_filtered, groups=pData(eset_rma_filtered)[,3],groupnames=levels(pData(eset_rma_filtered)[,3]),addtext=etq,legend=FALSE)
+
+@
+
+Podemos observar que el PCA ha conseguido agrupar las variables en dos grandes grupos(PC1 y PC2), que discriminan algo entre los pacientes de grupo A (rojos) y los pacientes del grupo B (verdes). El mayor problema que se observa es que los pacientes del grupo C (azules) están mezclados con todos. Esto tiene un importante significado, ya que este grupo representa a los pacientes que sufren recidiva tardía.
+
+\section{Análisis de alto nivel}
+
+Podemos clasificar el análisis de alto nivel en:
+\begin{enumerate}
+  \item Class comparison
+  \begin{itemize}
+    \item Selección de genes diferencialmente expresados entre diferentes condiciones.
+    \item Métodos basados en modelos (ANOVA) y tests globales (SAM y limma - modelos lineales y Bayes empírico).
+    \item Diagramas tipo "volcano" y diagramas Venn.
+  \end{itemize}
+  \item Class discovery (Clustering)
+  \begin{itemize}
+    \item No supervisado: HC, SOM, K-means.
+    \item Reducción dimensionalidad: PCA, MDS.
+  \end{itemize}
+  \item Class prediction (modelos predictivos)
+  \begin{itemize}
+    \item Estadística: regresión logística, regresión de Cox.
+    \item Machine Learning: RRNN (redes neuronales), SVM (máquinas de soporte vectorial), DT (árboles de decisión), etc.
+  \end{itemize}
+\end{enumerate}
+
+\subsection{Class comparison}
+
+La selección de genes se realiza en base a estadísticos y tests de comparaciones múltiples.
+Cuando el número de muestras es pequeño se utiliza el estadístico-t modificado para el análisis de expresión diferencial.
+El resultado del análisis de expresión diferencial es una lista ordenada por le p-valor y el q-valor (p-valor ajustado).
+
+<<>>=
+#class comparison
+library(limma)
+my.eset<-eset_rma_filtered
+npac<-length(sampleNames(my.eset))
+p.value.cutoff<-0.05
+design<-as.matrix(data.frame(A=rep(0,npac), B=rep(0,npac), C=rep(0,npac)))
+design[pData(my.eset)$grupo=="Grupo A","A"]<-1
+design[pData(my.eset)$grupo=="Grupo B","B"]<-1
+design[pData(my.eset)$grupo=="Grupo C","C"]<-1
+fit1<-lmFit(my.eset, design)
+cont.matrix<-makeContrasts(AvsB=B-A,AvsC=C-A,BvsC=C-B,AvsBC=(B*0.7103+C*0.28947)-A,ACvsB=B-(A*0.75+C*0.25),levels=design)
+fit1.main<-contrasts.fit(fit1,cont.matrix)
+fit1.main<-eBayes(fit1.main)
+t4<-topTable(fit1.main, number=nrow(fit1.main), coef="AvsBC", adjust="fdr")
+t4
+@
+
+Para interpretar la información de la lista debemos tener en cuenta que el valor de logFC representa la diferencia de expresión, y cuanto más alto mayor será ésta. Por ejemplo, el primer gen de la lista (hsa-miR-1202-st) se expresa de manera diferencial en los pacientes de grupo A frente a los pacientes de grupo B y C, y, al ser positivo su valor de logFC, indica que se sobreexpresa en B y C (es decir, en pacientes que recidivan).
+
+
+El diagrama de Venn muestra los genes en común para los diferentes contrastes de diseño experimental:
+
+<<fig=TRUE>>=
+p<-as.matrix(fit1.main$p.value[,1:3])
+s<-sign(as.matrix(fit1.main$coefficients[,1:3]))
+res1<-new("TestResults", s*(p<p.value.cutoff))
+probeNames<-rownames(res1)
+sum.res1.rows<-apply(abs(res1),1,sum)
+res1.selected<-res1[sum.res1.rows!=0,]
+probeNames.selected<-probeNames[sum.res1.rows!=0]
+vennDiagram(res1.selected[,1:3], main="miRNA in common", cex=0.9)
+@
+
+
+\subsection{Class discovery (Clustering)}
+
+El clustering agrupa e identifica genes expresados de forma similar y después trata de correlacionar resultados con la biología. La idea inicial es que los genes funcionalmente relacionados y co-regulados probablemente se expresarán simultáneamente, por lo que pueden ser agrupados en un cluster.
+Esto puede aplicarse para identificar grupos de genes co-regulados, identificar patrones de expresión temporal y reducir redundancia en modelos predictivos.
+Los algoritmos utilizados para clustering son: jerárquico, SOM, K-means, HOPA (específico para datos de microarrays) y PCA.
+El 'heatmap' es una matriz rectangular de bloques con colores representando el nivel de expresión de cada gen en cada array.
+
+<<fig=TRUE>>=
+my.colorFct <- function(n=50,low.col=0.45,high.col=1,saturation=1) {
+  if(n<2)stop("n must be greater than 2")
+  n1<-n%/%2
+  n2<-n-n1
+  c(hsv(low.col,saturation,seq(1,0,length=n1)),hsv(high.col,saturation,seq(0,1,length=n2)))
+}
+
+exprs2cluster<-exprs(my.eset)[probeNames.selected,]
+colnames(exprs2cluster)<-pData(my.eset)$ID
+misdatoss<-t(scale(t(exprs2cluster)))
+hr<-hclust(as.dist(1-cor(t(misdatoss),method="pearson")),method="complete")
+hc<-hclust(as.dist(1-cor(misdatoss,method="spearman")),method="complete")
+mycl<-cutree(hr,h=max(hr$height)/1.5,k=5)
+mycolhc<-sample(rainbow(256))
+mycolhc<-mycolhc[as.vector(mycl)]
+heatmap(exprs2cluster,Rowv=as.dendrogram(hr),Colv=as.dendrogram(hc),col=my.colorFct(low.col=0.6,high.col=1,saturation=1),scale="row",RowSideColors=mycolhc,verbose=TRUE)
+
+@
+
+\end{document}
